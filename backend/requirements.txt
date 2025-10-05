@@ -1,0 +1,12 @@
+Django
+djangorestframework
+django-cors-headers
+python-dotenv
+psycopg[binary]
+Pillow
+djangorestframework-simplejwt
+environs
+whitenoise
+django-filter
+python-telegram-bot
+cryptography

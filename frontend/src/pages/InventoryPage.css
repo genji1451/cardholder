@@ -1,0 +1,41 @@
+.inventory-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.inventory-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.inventory-header h1 {
+  color: #2d3748;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.inventory-header p {
+  color: #718096;
+  font-size: 1.1rem;
+}
+
+.inventory-controls {
+  margin-bottom: 2rem;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #718096;
+}
+
+.error {
+  color: #e53e3e;
+}
+
+@media (max-width: 768px) {
+  .inventory-header h1 {
+    font-size: 2rem;
+  }
+}

@@ -1,0 +1,117 @@
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  /* Spider-Man Comic Colors */
+  --spider-red: #e31937;
+  --spider-blue: #1e3a8a;
+  --spider-gold: #fbbf24;
+  --spider-dark: #0f172a;
+  --spider-light: #f1f5f9;
+  --spider-accent: #dc2626;
+  --spider-success: #16a34a;
+  --spider-warning: #ea580c;
+  --spider-info: #2563eb;
+  
+  /* Comic-style shadows */
+  --comic-shadow: 0 8px 32px rgba(14, 20, 38, 0.15);
+  --comic-shadow-lg: 0 16px 64px rgba(14, 20, 38, 0.25);
+  
+  /* Gradients */
+  --spider-gradient: linear-gradient(135deg, #e31937 0%, #dc2626 50%, #b91c1c 100%);
+  --hero-gradient: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+  --villain-gradient: linear-gradient(135deg, #7c2d12 0%, #ea580c 50%, #f97316 100%);
+}
+
+body {
+  margin: 0;
+  font-family: 'Comic Sans MS', 'Trebuchet MS', 'Arial Black', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  min-height: 100vh;
+  color: var(--spider-light);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Comic-style text effects */
+.comic-text {
+  font-family: 'Comic Sans MS', 'Trebuchet MS', 'Arial Black', sans-serif;
+  font-weight: bold;
+  text-shadow: 2px 2px 0px var(--spider-dark);
+}
+
+.comic-outline {
+  -webkit-text-stroke: 1px var(--spider-dark);
+  text-stroke: 1px var(--spider-dark);
+}
+
+/* Comic-style buttons */
+.comic-button {
+  background: var(--spider-gradient);
+  border: 3px solid var(--spider-dark);
+  border-radius: 8px;
+  color: white;
+  font-family: 'Comic Sans MS', 'Trebuchet MS', 'Arial Black', sans-serif;
+  font-weight: bold;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--comic-shadow);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.comic-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--comic-shadow-lg);
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
+}
+
+/* Comic-style cards */
+.comic-card {
+  background: white;
+  border: 4px solid var(--spider-dark);
+  border-radius: 12px;
+  box-shadow: var(--comic-shadow);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.comic-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--spider-gradient);
+}
+
+.comic-card:hover {
+  transform: translateY(-4px) rotate(1deg);
+  box-shadow: var(--comic-shadow-lg);
+}
+
+/* Hero vs Villain styling */
+.hero-card {
+  border-color: var(--spider-blue);
+}
+
+.hero-card::before {
+  background: var(--hero-gradient);
+}
+
+.villain-card {
+  border-color: var(--spider-warning);
+}
+
+.villain-card::before {
+  background: var(--villain-gradient);
+}

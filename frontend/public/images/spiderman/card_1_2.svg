@@ -1,0 +1,35 @@
+<svg width="200" height="280" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3c72;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2a5298;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Фон -->
+  <rect width="200" height="280" fill="url(#bg)" rx="15" stroke="#ff6b35" stroke-width="3"/>
+  
+  <!-- Паутина -->
+  <circle cx="100" cy="140" r="80" fill="none" stroke="#ff6b35" stroke-width="2" opacity="0.3"/>
+  <circle cx="100" cy="140" r="60" fill="none" stroke="#ff6b35" stroke-width="2" opacity="0.3"/>
+  <circle cx="100" cy="140" r="40" fill="none" stroke="#ff6b35" stroke-width="2" opacity="0.3"/>
+  
+  <!-- Линии паутины -->
+  <line x1="100" y1="60" x2="100" y2="220" stroke="#ff6b35" stroke-width="2" opacity="0.3"/>
+  <line x1="20" y1="140" x2="180" y2="140" stroke="#ff6b35" stroke-width="2" opacity="0.3"/>
+  <line x1="40" y1="80" x2="160" y2="200" stroke="#ff6b35" stroke-width="2" opacity="0.3"/>
+  <line x1="160" y1="80" x2="40" y2="200" stroke="#ff6b35" stroke-width="2" opacity="0.3"/>
+  
+  <!-- Паук -->
+  <text x="100" y="120" text-anchor="middle" font-size="40" fill="#ff6b35">🕷️</text>
+  
+  <!-- Номер карточки -->
+  <text x="100" y="160" text-anchor="middle" font-size="24" font-weight="bold" fill="white">#2</text>
+  
+  <!-- Название -->
+  <text x="100" y="180" text-anchor="middle" font-size="14" fill="white">Spider-Man</text>
+  <text x="100" y="200" text-anchor="middle" font-size="12" fill="#ff6b35">Series 1</text>
+  
+  <!-- Рамка -->
+  <rect x="10" y="10" width="180" height="260" fill="none" stroke="#ff6b35" stroke-width="2" rx="10"/>
+</svg>

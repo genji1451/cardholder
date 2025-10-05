@@ -1,0 +1,111 @@
+/* Telegram Auth Component Styles */
+
+.telegram-auth {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--bg-card, #1a1a1a);
+  border-radius: 16px;
+  border: 1px solid var(--border-color, #2a2a2a);
+  text-align: center;
+}
+
+.auth-header h2 {
+  color: var(--text-primary, #f9fafb);
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #e31937, #0066cc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.auth-header p {
+  color: var(--text-secondary, #9ca3af);
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.auth-content {
+  margin-bottom: 1.5rem;
+}
+
+.telegram-widget-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(227, 25, 55, 0.2);
+  border-top: 3px solid #e31937;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-indicator p {
+  color: var(--text-secondary, #9ca3af);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.error-message {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.error-message p {
+  color: #ef4444;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.auth-footer {
+  border-top: 1px solid var(--border-color, #2a2a2a);
+  padding-top: 1rem;
+}
+
+.privacy-note {
+  color: var(--text-secondary, #9ca3af);
+  font-size: 0.8rem;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Telegram Widget Override */
+.telegram-widget-container iframe {
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .telegram-auth {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  
+  .auth-header h2 {
+    font-size: 1.25rem;
+  }
+}

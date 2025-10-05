@@ -1,0 +1,86 @@
+.charts {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.charts h2 {
+  margin: 0 0 1.5rem 0;
+  color: #2d3748;
+  font-size: 1.5rem;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.chart-container h3 {
+  margin: 0 0 1rem 0;
+  color: #4a5568;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.rarity-chart, .series-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rarity-item, .series-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.rarity-label, .series-label {
+  min-width: 80px;
+  font-size: 0.9rem;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.rarity-bar, .series-bar {
+  flex: 1;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.rarity-fill, .series-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.rarity-count, .series-count {
+  min-width: 30px;
+  text-align: right;
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .rarity-item, .series-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .rarity-label, .series-label {
+    min-width: auto;
+  }
+  
+  .rarity-bar, .series-bar {
+    width: 100%;
+  }
+}

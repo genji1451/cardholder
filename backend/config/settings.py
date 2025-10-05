@@ -154,12 +154,30 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS
 CORS_ALLOWED_ORIGINS = [
-    *(h.strip() for h in os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:5173').split(',') if h.strip()),
+    'https://portfolio.cards',
+    'https://spiderman-cards-portfolio.vercel.app',
+    'https://spiderman-cards-portfolio-git-main.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    *(h.strip() for h in os.getenv('CORS_ALLOWED_ORIGINS', '').split(',') if h.strip()),
 ]
 
 # Additional CORS settings for development
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # Allow all origins in development
+
+# CORS Headers
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 # Telegram Bot Settings
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "8089087655:AAH3ZobI5iV5ZTENxyLqQdyDV5nXGfAXTU0")

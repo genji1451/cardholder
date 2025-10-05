@@ -5,7 +5,7 @@ import './App.css';
 import apiClient from './api/client';
 
 // Contexts
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Components
 import Navigation from './components/Navigation';

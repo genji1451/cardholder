@@ -55,7 +55,7 @@ const TelegramAuth: React.FC<TelegramAuthProps> = ({ onAuth, botName }) => {
       if (container) {
         container.innerHTML = '';
       }
-      delete window.onTelegramAuth;
+      (window as any).onTelegramAuth = undefined;
     };
   }, [botName, onAuth]);
 

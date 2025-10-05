@@ -54,8 +54,8 @@ INSTALLED_APPS = [
     'apps.finance',
     'apps.wishlist',
     'apps.analytics',
-    'apps.sync',
-    'apps.media',
+    #'apps.sync',
+    #'apps.media',
 ]
 
 MIDDLEWARE = [

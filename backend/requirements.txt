@@ -11,3 +11,4 @@ django-filter
 python-telegram-bot
 cryptography
 gunicorn
+dj-database-url

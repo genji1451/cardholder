@@ -201,10 +201,19 @@ SIMPLE_JWT = {
 }
 # Production settings for Render
 if not DEBUG:
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
-    }
+    try:
+        import dj_database_url
+        DATABASES = {
+            'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
+        }
+    except ImportError:
+        # Fallback to default database if dj_database_url is not available
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
     
     # Static files
     STATIC_URL = '/static/'

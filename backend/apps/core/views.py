@@ -129,3 +129,21 @@ def check_telegram_subscription(request):
         'has_premium': is_subscribed,
         'status': subscription_result['status']
     })
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def api_root(request):
+    """API root endpoint"""
+    return Response({
+        'message': 'Spider-Man Cards Collection API',
+        'version': '1.0.0',
+        'status': 'running',
+        'endpoints': {
+            'auth': '/api/auth/telegram/',
+            'user': '/api/auth/me/',
+            'subscription': '/api/auth/subscription/',
+            'cards': '/api/cards/',
+            'inventory': '/api/inventory/',
+            'wishlist': '/api/wishlist/',
+            'analytics': '/api/analytics/',
+        }
+    })    

@@ -143,60 +143,72 @@ def check_telegram_subscription(request):
 @permission_classes([AllowAny])
 def api_root(request):
     """API root endpoint"""
-    # Auto-initialize database if empty
+    # Try to initialize database if needed
     try:
         from apps.cards.models import Card, Series
         from decimal import Decimal
+        from django.core.management import execute_from_command_line
+        import sys
         
-        if Card.objects.count() == 0:
-            # Create series if not exists
-            series, created = Series.objects.get_or_create(
-                number=1,
-                defaults={
-                    'title': 'Spider-Man Collection',
-                    'description': 'Основная коллекция карточек Человека-Паука'
-                }
-            )
-            
-            # Create sample cards
-            sample_cards = [
-                {
-                    'number': 1,
-                    'title': 'Человек-Паук',
-                    'type': 'Герой',
-                    'rarity': 'o',
-                    'base_price_rub': Decimal('52.50'),
-                    'description': 'Основной герой комиксов Marvel',
-                    'series': series
-                },
-                {
-                    'number': 2,
-                    'title': 'Железный Человек',
-                    'type': 'Герой',
-                    'rarity': 'o',
-                    'base_price_rub': Decimal('55.00'),
-                    'description': 'Гений, миллиардер, филантроп',
-                    'series': series
-                },
-                {
-                    'number': 3,
-                    'title': 'Веном',
-                    'type': 'Антигерой',
-                    'rarity': 'ск',
-                    'base_price_rub': Decimal('92.50'),
-                    'description': 'Симбиот и бывший хост Эдди Брок',
-                    'series': series
-                }
-            ]
-            
-            for card_data in sample_cards:
-                Card.objects.get_or_create(
-                    number=card_data['number'],
-                    series=series,
-                    defaults=card_data
+        # Try to run migrations first
+        try:
+            execute_from_command_line(['manage.py', 'migrate', '--run-syncdb'])
+        except Exception:
+            pass  # Ignore migration errors
+        
+        # Try to create data if database is accessible
+        try:
+            if Card.objects.count() == 0:
+                # Create series if not exists
+                series, created = Series.objects.get_or_create(
+                    number=1,
+                    defaults={
+                        'title': 'Spider-Man Collection',
+                        'description': 'Основная коллекция карточек Человека-Паука'
+                    }
                 )
+                
+                # Create sample cards
+                sample_cards = [
+                    {
+                        'number': 1,
+                        'title': 'Человек-Паук',
+                        'type': 'Герой',
+                        'rarity': 'o',
+                        'base_price_rub': Decimal('52.50'),
+                        'description': 'Основной герой комиксов Marvel',
+                        'series': series
+                    },
+                    {
+                        'number': 2,
+                        'title': 'Железный Человек',
+                        'type': 'Герой',
+                        'rarity': 'o',
+                        'base_price_rub': Decimal('55.00'),
+                        'description': 'Гений, миллиардер, филантроп',
+                        'series': series
+                    },
+                    {
+                        'number': 3,
+                        'title': 'Веном',
+                        'type': 'Антигерой',
+                        'rarity': 'ск',
+                        'base_price_rub': Decimal('92.50'),
+                        'description': 'Симбиот и бывший хост Эдди Брок',
+                        'series': series
+                    }
+                ]
+                
+                for card_data in sample_cards:
+                    Card.objects.get_or_create(
+                        number=card_data['number'],
+                        series=series,
+                        defaults=card_data
+                    )
+        except Exception:
+            pass  # Database not ready yet
     except Exception:
-        pass  # Ignore initialization errors
+        pass  # Ignore all initialization errors
     
     return Response({
         'message': 'Spider-Man Cards Collection API',

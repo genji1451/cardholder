@@ -157,6 +157,7 @@ CORS_ALLOWED_ORIGINS = [
     'https://portfolio.cards',
     'https://spiderman-cards-portfolio.vercel.app',
     'https://spiderman-cards-portfolio-git-main.vercel.app',
+    'https://cardholder.onrender.com',  # Allow same origin
     'http://localhost:5173',
     'http://localhost:5174',
     *(h.strip() for h in os.getenv('CORS_ALLOWED_ORIGINS', '').split(',') if h.strip()),
@@ -234,3 +235,10 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+    
+    # CORS settings for production
+    CORS_ALLOW_ALL_ORIGINS = False  # Be more restrictive in production
+    CORS_ALLOWED_ORIGINS.extend([
+        'https://cardholder.onrender.com',
+        'https://*.vercel.app',  # Allow Vercel deployments
+    ])

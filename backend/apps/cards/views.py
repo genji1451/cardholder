@@ -21,6 +21,14 @@ class CardViewSet(viewsets.ModelViewSet):
     ordering_fields = ['number', 'title', 'base_price_rub']
     ordering = ['series__number', 'number']
 
+    def get_queryset(self):
+        """Get queryset with fallback for empty database"""
+        try:
+            return Card.objects.all()
+        except Exception:
+            # If database is not initialized, return empty queryset
+            return Card.objects.none()
+
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
             return CardDetailSerializer

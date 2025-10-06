@@ -168,4 +168,79 @@ def health_check(request):
             'status': 'unhealthy',
             'error': str(e),
             'timestamp': str(timezone.now())
+        }, status=500)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def init_database(request):
+    """Initialize database with sample data"""
+    try:
+        from apps.cards.models import Card, Series
+        from decimal import Decimal
+        
+        # Create series if not exists
+        series, created = Series.objects.get_or_create(
+            number=1,
+            defaults={
+                'title': 'Spider-Man Collection',
+                'description': 'Основная коллекция карточек Человека-Паука'
+            }
+        )
+        
+        # Create sample cards
+        sample_cards = [
+            {
+                'number': 1,
+                'title': 'Человек-Паук',
+                'type': 'Герой',
+                'rarity': 'o',
+                'base_price_rub': Decimal('52.50'),
+                'description': 'Основной герой комиксов Marvel',
+                'series': series
+            },
+            {
+                'number': 2,
+                'title': 'Железный Человек',
+                'type': 'Герой',
+                'rarity': 'o',
+                'base_price_rub': Decimal('55.00'),
+                'description': 'Гений, миллиардер, филантроп',
+                'series': series
+            },
+            {
+                'number': 3,
+                'title': 'Веном',
+                'type': 'Антигерой',
+                'rarity': 'ск',
+                'base_price_rub': Decimal('92.50'),
+                'description': 'Симбиот и бывший хост Эдди Брок',
+                'series': series
+            }
+        ]
+        
+        created_count = 0
+        for card_data in sample_cards:
+            card, created = Card.objects.get_or_create(
+                number=card_data['number'],
+                series=series,
+                defaults=card_data
+            )
+            if created:
+                created_count += 1
+        
+        total_cards = Card.objects.count()
+        return Response({
+            'status': 'success',
+            'message': f'База данных инициализирована',
+            'cards_created': created_count,
+            'total_cards': total_cards,
+            'timestamp': str(timezone.now())
+        })
+        
+    except Exception as e:
+        return Response({
+            'status': 'error',
+            'error': str(e),
+            'timestamp': str(timezone.now())
         }, status=500)    

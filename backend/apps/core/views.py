@@ -167,40 +167,39 @@ def api_root(request):
                     }
                 )
                 
-                # Create sample cards
-                sample_cards = [
-                    {
-                        'number': 1,
+                # Create simple sample cards
+                Card.objects.get_or_create(
+                    number=1,
+                    series=series,
+                    defaults={
                         'title': 'Человек-Паук',
                         'rarity': 'o',
                         'base_price_rub': Decimal('52.50'),
-                        'notes': 'Основной герой комиксов Marvel',
-                        'series': series
-                    },
-                    {
-                        'number': 2,
+                        'notes': 'Основной герой комиксов Marvel'
+                    }
+                )
+                
+                Card.objects.get_or_create(
+                    number=2,
+                    series=series,
+                    defaults={
                         'title': 'Железный Человек',
                         'rarity': 'o',
                         'base_price_rub': Decimal('55.00'),
-                        'notes': 'Гений, миллиардер, филантроп',
-                        'series': series
-                    },
-                    {
-                        'number': 3,
+                        'notes': 'Гений, миллиардер, филантроп'
+                    }
+                )
+                
+                Card.objects.get_or_create(
+                    number=3,
+                    series=series,
+                    defaults={
                         'title': 'Веном',
                         'rarity': 'ск',
                         'base_price_rub': Decimal('92.50'),
-                        'notes': 'Симбиот и бывший хост Эдди Брок',
-                        'series': series
+                        'notes': 'Симбиот и бывший хост Эдди Брок'
                     }
-                ]
-                
-                for card_data in sample_cards:
-                    Card.objects.get_or_create(
-                        number=card_data['number'],
-                        series=series,
-                        defaults=card_data
-                    )
+                )
         except Exception:
             pass  # Database not ready yet
     except Exception:

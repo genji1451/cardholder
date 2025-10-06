@@ -37,55 +37,64 @@ def telegram_auth(request):
     """
     Authenticate user via Telegram
     """
-    serializer = TelegramAuthSerializer(data=request.data)
-    if not serializer.is_valid():
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    auth_data = serializer.validated_data.copy()
-    bot_token = settings.TELEGRAM_BOT_TOKEN
-    
-    # Verify Telegram data
-    if not verify_telegram_auth(auth_data, bot_token):
-        return Response(
-            {'error': 'Invalid authentication data'},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-    
-    telegram_id = auth_data['id']
-    
-    # Get or create user
     try:
-        profile = UserProfile.objects.get(telegram_id=telegram_id)
-        user = profile.user
-        created = False
-    except UserProfile.DoesNotExist:
-        # Create new user
-        username = auth_data.get('username') or f"tg_user_{telegram_id}"
-        user = User.objects.create_user(
-            username=username,
-            first_name=auth_data.get('first_name', ''),
-            last_name=auth_data.get('last_name', '')
-        )
-        profile = user.profile
-        created = True
-    
-    # Update profile with Telegram data
-    profile.telegram_id = telegram_id
-    profile.telegram_username = auth_data.get('username', '')
-    profile.telegram_first_name = auth_data.get('first_name', '')
-    profile.telegram_last_name = auth_data.get('last_name', '')
-    profile.telegram_photo_url = auth_data.get('photo_url', '')
-    profile.save()
-    
-    # Generate JWT tokens
-    refresh = RefreshToken.for_user(user)
-    
-    return Response({
-        'access': str(refresh.access_token),
-        'refresh': str(refresh),
-        'user': UserSerializer(user).data,
-        'created': created
-    }, status=status.HTTP_200_OK)
+        serializer = TelegramAuthSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        auth_data = serializer.validated_data.copy()
+        bot_token = settings.TELEGRAM_BOT_TOKEN
+        
+        # Verify Telegram data
+        if not verify_telegram_auth(auth_data, bot_token):
+            return Response(
+                {'error': 'Invalid authentication data'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        telegram_id = auth_data['id']
+        
+        # Get or create user
+        try:
+            profile = UserProfile.objects.get(telegram_id=telegram_id)
+            user = profile.user
+            created = False
+        except UserProfile.DoesNotExist:
+            # Create new user
+            username = auth_data.get('username') or f"tg_user_{telegram_id}"
+            user = User.objects.create_user(
+                username=username,
+                first_name=auth_data.get('first_name', ''),
+                last_name=auth_data.get('last_name', '')
+            )
+            profile = user.profile
+            created = True
+        
+        # Update profile with Telegram data
+        profile.telegram_id = telegram_id
+        profile.telegram_username = auth_data.get('username', '')
+        profile.telegram_first_name = auth_data.get('first_name', '')
+        profile.telegram_last_name = auth_data.get('last_name', '')
+        profile.telegram_photo_url = auth_data.get('photo_url', '')
+        profile.save()
+        
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': UserSerializer(user).data,
+            'created': created
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        # Return error details for debugging
+        return Response({
+            'error': 'Database connection error',
+            'details': str(e),
+            'message': 'База данных не инициализирована. Попробуйте позже.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])

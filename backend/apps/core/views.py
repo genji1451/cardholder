@@ -299,3 +299,42 @@ def init_database(request):
             'error': str(e),
             'timestamp': str(timezone.now())
         }, status=500)    
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def run_migrations(request):
+    """Run Django migrations"""
+    try:
+        import subprocess
+        import os
+        
+        # Run migrations
+        result = subprocess.run(
+            ['python', 'manage.py', 'migrate', '--noinput'],
+            capture_output=True,
+            text=True,
+            cwd=os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        )
+        
+        if result.returncode == 0:
+            return Response({
+                'status': 'success',
+                'message': 'Миграции выполнены успешно',
+                'output': result.stdout,
+                'timestamp': str(timezone.now())
+            })
+        else:
+            return Response({
+                'status': 'error',
+                'message': 'Ошибка выполнения миграций',
+                'error': result.stderr,
+                'timestamp': str(timezone.now())
+            }, status=500)
+            
+    except Exception as e:
+        return Response({
+            'status': 'error',
+            'error': str(e),
+            'timestamp': str(timezone.now())
+        }, status=500)

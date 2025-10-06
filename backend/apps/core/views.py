@@ -172,28 +172,25 @@ def api_root(request):
                     {
                         'number': 1,
                         'title': 'Человек-Паук',
-                        'type': 'Герой',
                         'rarity': 'o',
                         'base_price_rub': Decimal('52.50'),
-                        'description': 'Основной герой комиксов Marvel',
+                        'notes': 'Основной герой комиксов Marvel',
                         'series': series
                     },
                     {
                         'number': 2,
                         'title': 'Железный Человек',
-                        'type': 'Герой',
                         'rarity': 'o',
                         'base_price_rub': Decimal('55.00'),
-                        'description': 'Гений, миллиардер, филантроп',
+                        'notes': 'Гений, миллиардер, филантроп',
                         'series': series
                     },
                     {
                         'number': 3,
                         'title': 'Веном',
-                        'type': 'Антигерой',
                         'rarity': 'ск',
                         'base_price_rub': Decimal('92.50'),
-                        'description': 'Симбиот и бывший хост Эдди Брок',
+                        'notes': 'Симбиот и бывший хост Эдди Брок',
                         'series': series
                     }
                 ]
@@ -267,28 +264,25 @@ def init_database(request):
             {
                 'number': 1,
                 'title': 'Человек-Паук',
-                'type': 'Герой',
                 'rarity': 'o',
                 'base_price_rub': Decimal('52.50'),
-                'description': 'Основной герой комиксов Marvel',
+                'notes': 'Основной герой комиксов Marvel',
                 'series': series
             },
             {
                 'number': 2,
                 'title': 'Железный Человек',
-                'type': 'Герой',
                 'rarity': 'o',
                 'base_price_rub': Decimal('55.00'),
-                'description': 'Гений, миллиардер, филантроп',
+                'notes': 'Гений, миллиардер, филантроп',
                 'series': series
             },
             {
                 'number': 3,
                 'title': 'Веном',
-                'type': 'Антигерой',
                 'rarity': 'ск',
                 'base_price_rub': Decimal('92.50'),
-                'description': 'Симбиот и бывший хост Эдди Брок',
+                'notes': 'Симбиот и бывший хост Эдди Брок',
                 'series': series
             }
         ]

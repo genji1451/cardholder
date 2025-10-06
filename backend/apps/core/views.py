@@ -163,8 +163,7 @@ def api_root(request):
                 series, created = Series.objects.get_or_create(
                     number=1,
                     defaults={
-                        'title': 'Spider-Man Collection',
-                        'description': 'Основная коллекция карточек Человека-Паука'
+                        'title': 'Spider-Man Collection'
                     }
                 )
                 
@@ -259,8 +258,7 @@ def init_database(request):
         series, created = Series.objects.get_or_create(
             number=1,
             defaults={
-                'title': 'Spider-Man Collection',
-                'description': 'Основная коллекция карточек Человека-Паука'
+                'title': 'Spider-Man Collection'
             }
         )
         

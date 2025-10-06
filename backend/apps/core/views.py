@@ -2,6 +2,7 @@ import hashlib
 import hmac
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -146,4 +147,25 @@ def api_root(request):
             'wishlist': '/api/wishlist/',
             'analytics': '/api/analytics/',
         }
-    })    
+    })
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def health_check(request):
+    """Health check endpoint"""
+    try:
+        from apps.cards.models import Card
+        card_count = Card.objects.count()
+        return Response({
+            'status': 'healthy',
+            'database': 'connected',
+            'cards_count': card_count,
+            'timestamp': str(timezone.now())
+        })
+    except Exception as e:
+        return Response({
+            'status': 'unhealthy',
+            'error': str(e),
+            'timestamp': str(timezone.now())
+        }, status=500)    

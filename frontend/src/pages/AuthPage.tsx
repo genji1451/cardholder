@@ -21,8 +21,8 @@ const AuthPage: React.FC = () => {
       const response = await apiClient.post('/auth/telegram/', telegramUser);
       const { access, refresh } = response.data;
       
-      // Save tokens and user data
-      login(access, refresh);
+      // Save tokens and load user data
+      await login(access, refresh);
       
       // Redirect to dashboard
       navigate('/dashboard');

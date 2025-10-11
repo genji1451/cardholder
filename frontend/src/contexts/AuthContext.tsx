@@ -22,7 +22,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (accessToken: string, refreshToken: string) => void;
+  login: (accessToken: string, refreshToken: string) => Promise<void>;
   logout: () => void;
   checkSubscription: () => Promise<{ is_subscribed: boolean; has_premium: boolean }>;
 }
@@ -67,12 +67,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = (accessToken: string, refreshToken: string) => {
+  const login = async (accessToken: string, refreshToken: string) => {
     localStorage.setItem('access_token', accessToken);
     localStorage.setItem('refresh_token', refreshToken);
     
     // Update API client headers
     apiClient.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+    
+    // Fetch user data after login
+    try {
+      const response = await apiClient.get('/auth/me/');
+      setUser(response.data);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      // If fetching user fails, clear tokens
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      delete apiClient.defaults.headers.common['Authorization'];
+      throw error;
+    }
   };
 
   const logout = () => {

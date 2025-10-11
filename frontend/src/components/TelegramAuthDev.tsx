@@ -29,8 +29,8 @@ const TelegramAuthDev: React.FC<TelegramAuthDevProps> = ({ onAuth }) => {
         last_name: username || '',
         username: username || '',
         photo_url: '',
-        auth_date: Math.floor(Date.now() / 1000),
-        hash: 'dev_hash_' + Date.now() // Для разработки
+        auth_date: 1640995200, // Фиксированная дата для тестирования
+        hash: 'dev_hash_test' // Фиксированный hash для тестирования
       };
 
       onAuth(telegramUser);

@@ -40,7 +40,10 @@ def telegram_auth(request):
     try:
         serializer = TelegramAuthSerializer(data=request.data)
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                'error': 'Validation failed',
+                'details': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
         
         auth_data = serializer.validated_data.copy()
         bot_token = settings.TELEGRAM_BOT_TOKEN
@@ -62,12 +65,26 @@ def telegram_auth(request):
         except UserProfile.DoesNotExist:
             # Create new user
             username = auth_data.get('username') or f"tg_user_{telegram_id}"
+            
+            # Check if username already exists and make it unique
+            base_username = username
+            counter = 1
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}_{counter}"
+                counter += 1
+            
             user = User.objects.create_user(
                 username=username,
                 first_name=auth_data.get('first_name', ''),
                 last_name=auth_data.get('last_name', '')
             )
-            profile = user.profile
+            
+            # Get or create profile (signal should create it, but let's be safe)
+            try:
+                profile = user.profile
+            except UserProfile.DoesNotExist:
+                profile = UserProfile.objects.create(user=user)
+            
             created = True
         
         # Update profile with Telegram data
@@ -89,11 +106,13 @@ def telegram_auth(request):
         }, status=status.HTTP_200_OK)
         
     except Exception as e:
-        # Return error details for debugging
+        # Return detailed error for debugging
+        import traceback
         return Response({
-            'error': 'Database connection error',
+            'error': 'Server error',
             'details': str(e),
-            'message': 'База данных не инициализирована. Попробуйте позже.'
+            'traceback': traceback.format_exc(),
+            'message': 'Произошла ошибка на сервере. Попробуйте позже или обратитесь к администратору.'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

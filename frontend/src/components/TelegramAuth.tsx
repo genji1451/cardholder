@@ -39,39 +39,59 @@ const TelegramAuth: React.FC<TelegramAuthProps> = ({ onAuth, botName }) => {
       onAuth(user);
     };
 
-    // Load Telegram script
-    const script = document.createElement('script');
-    script.src = 'https://telegram.org/js/telegram-widget.js?22';
-    script.setAttribute('data-telegram-login', botName);
-    script.setAttribute('data-size', 'large');
-    script.setAttribute('data-onauth', 'onTelegramAuth(user)');
-    script.setAttribute('data-request-access', 'write');
-    script.setAttribute('data-userpic', 'false');
-    script.async = true;
-
-    script.onload = () => {
-      console.log('✅ Telegram script loaded');
-      setDebugInfo('Скрипт загружен');
+    // Load Telegram script with retry logic
+    const loadScript = (attempt = 1) => {
+      const script = document.createElement('script');
+      // Try different CDN if first attempt fails
+      script.src = attempt === 1 
+        ? 'https://telegram.org/js/telegram-widget.js?22'
+        : `https://telegram.org/js/telegram-widget.js?${Date.now()}`;
       
-      // Check if iframe was created
-      setTimeout(() => {
-        const iframe = document.querySelector('iframe[id^="telegram-login"]');
-        console.log('🔍 Checking for iframe:', iframe);
-        if (iframe) {
-          console.log('✅ Iframe found');
-          setDebugInfo('Виджет загружен');
+      script.setAttribute('data-telegram-login', botName);
+      script.setAttribute('data-size', 'large');
+      script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+      script.setAttribute('data-request-access', 'write');
+      script.setAttribute('data-userpic', 'false');
+      script.async = true;
+      script.crossOrigin = 'anonymous';
+
+      script.onload = () => {
+        console.log('✅ Telegram script loaded (attempt', attempt, ')');
+        setDebugInfo('Скрипт загружен');
+        
+        // Check if iframe was created
+        setTimeout(() => {
+          const iframe = document.querySelector('iframe[id^="telegram-login"]');
+          console.log('🔍 Checking for iframe:', iframe);
+          if (iframe) {
+            console.log('✅ Iframe found');
+            console.log('Iframe src:', iframe.getAttribute('src'));
+            setDebugInfo('Виджет загружен ✅');
+          } else {
+            console.log('❌ Iframe not found');
+            setDebugInfo('Виджет не создан (возможно проблема с доменом в BotFather)');
+          }
+        }, 1500);
+      };
+
+      script.onerror = (e) => {
+        console.error('❌ Failed to load Telegram script (attempt', attempt, ')', e);
+        console.error('Script URL:', script.src);
+        
+        if (attempt < 2) {
+          console.log('🔄 Retrying with different URL...');
+          setDebugInfo(`Повтор загрузки... (попытка ${attempt + 1})`);
+          setTimeout(() => loadScript(attempt + 1), 2000);
         } else {
-          console.log('❌ Iframe not found');
-          setDebugInfo('Виджет не создан');
+          setDebugInfo('❌ Не удалось загрузить скрипт Telegram');
+          setError('Не удалось загрузить Telegram виджет. Возможно telegram.org заблокирован или проблемы с сетью.');
         }
-      }, 1000);
+      };
+      
+      return script;
     };
 
-    script.onerror = (e) => {
-      console.error('❌ Failed to load Telegram script', e);
-      setDebugInfo('Ошибка загрузки скрипта');
-      setError('Не удалось загрузить Telegram виджет');
-    };
+    const script = loadScript();
 
     const container = document.getElementById('telegram-login-container');
     console.log('🔍 Container found:', !!container);
@@ -129,6 +149,18 @@ const TelegramAuth: React.FC<TelegramAuthProps> = ({ onAuth, botName }) => {
         {error && (
           <div className="error-message">
             <p>❌ {error}</p>
+            <div style={{ 
+              marginTop: '0.75rem', 
+              padding: '0.75rem',
+              background: 'rgba(234, 179, 8, 0.1)',
+              border: '1px solid rgba(234, 179, 8, 0.3)',
+              borderRadius: '6px',
+              fontSize: '0.85rem',
+              color: '#fbbf24'
+            }}>
+              <strong>💡 Решение:</strong> Используйте "Режим разработки" ниже. 
+              Он полностью функционален и не требует доступа к telegram.org
+            </div>
           </div>
         )}
       </div>

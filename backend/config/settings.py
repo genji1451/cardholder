@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'apps.finance',
     'apps.wishlist',
     'apps.analytics',
+    'telegram_bot',  # Telegram Bot для проверки подлинности
     #'apps.sync',
     #'apps.media',
 ]
@@ -163,6 +164,11 @@ CORS_ALLOWED_ORIGINS = [
     *(h.strip() for h in os.getenv('CORS_ALLOWED_ORIGINS', '').split(',') if h.strip()),
 ]
 
+# Allow all Vercel preview deployments
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
+]
+
 # Additional CORS settings for development
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # Allow all origins in development
@@ -180,9 +186,28 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
+# CORS Methods
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
 # Telegram Bot Settings
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "8089087655:AAH3ZobI5iV5ZTENxyLqQdyDV5nXGfAXTU0")
+# Жёстко указываем правильный username бота
+TELEGRAM_BOT_USERNAME = "cardloginbot"  # Username бота без @
 TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID", "@cardholderka")
+
+# CSRF exemption for API endpoints
+CSRF_TRUSTED_ORIGINS = [
+    'https://portfolio.cards',
+    'https://*.vercel.app',
+    'https://cardholder.onrender.com',
+]
 
 # DRF
 REST_FRAMEWORK = {

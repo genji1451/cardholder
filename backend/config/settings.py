@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'apps.finance',
     'apps.wishlist',
     'apps.analytics',
-    'telegram_bot',  # Telegram Bot для проверки подлинности
+    # 'telegram_bot',  # Telegram Bot - не используется в текущей версии
     #'apps.sync',
     #'apps.media',
 ]

@@ -28,6 +28,7 @@ urlpatterns = [
     path('api/inventory/', include('apps.inventory.urls')),
     path('api/wishlist/', include('apps.wishlist.urls')),
     path('api/analytics/', include('apps.analytics.urls')),
+    # path('api/telegram-bot/', include('telegram_bot.urls')),  # Telegram Bot - не используется
 ]
 
 if settings.DEBUG:

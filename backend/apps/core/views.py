@@ -1,6 +1,7 @@
 import hashlib
 import hmac
 from django.conf import settings
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.utils import timezone
 from rest_framework import status
@@ -9,7 +10,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import UserProfile
-from .serializers import TelegramAuthSerializer, UserSerializer
+from .serializers import TelegramAuthSerializer, UserSerializer, RegisterSerializer, LoginSerializer
 
 
 def verify_telegram_auth(auth_data, bot_token):
@@ -113,6 +114,106 @@ def telegram_auth(request):
             'details': str(e),
             'traceback': traceback.format_exc(),
             'message': 'Произошла ошибка на сервере. Попробуйте позже или обратитесь к администратору.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register(request):
+    """
+    Register new user with email and password
+    """
+    try:
+        serializer = RegisterSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({
+                'error': 'Validation failed',
+                'details': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Create user
+        user = serializer.save()
+        
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': UserSerializer(user).data,
+            'message': 'Регистрация прошла успешно'
+        }, status=status.HTTP_201_CREATED)
+        
+    except Exception as e:
+        import traceback
+        return Response({
+            'error': 'Registration failed',
+            'details': str(e),
+            'traceback': traceback.format_exc(),
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def login(request):
+    """
+    Login user with email/username and password
+    """
+    try:
+        serializer = LoginSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({
+                'error': 'Validation failed',
+                'details': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        login_input = serializer.validated_data['login']
+        password = serializer.validated_data['password']
+        
+        # Try to find user by email or username
+        user = None
+        if '@' in login_input:
+            # Looks like email
+            try:
+                user = User.objects.get(email=login_input)
+            except User.DoesNotExist:
+                pass
+        
+        if user is None:
+            # Try username
+            try:
+                user = User.objects.get(username=login_input)
+            except User.DoesNotExist:
+                return Response({
+                    'error': 'Invalid credentials',
+                    'message': 'Неверный email/логин или пароль'
+                }, status=status.HTTP_401_UNAUTHORIZED)
+        
+        # Authenticate
+        authenticated_user = authenticate(username=user.username, password=password)
+        
+        if authenticated_user is None:
+            return Response({
+                'error': 'Invalid credentials',
+                'message': 'Неверный email/логин или пароль'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+        
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(authenticated_user)
+        
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': UserSerializer(authenticated_user).data,
+            'message': 'Вход выполнен успешно'
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        import traceback
+        return Response({
+            'error': 'Login failed',
+            'details': str(e),
+            'traceback': traceback.format_exc(),
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

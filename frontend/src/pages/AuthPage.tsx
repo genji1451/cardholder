@@ -82,7 +82,7 @@ const AuthPage: React.FC = () => {
       // Handle validation errors
       if (errorData?.details) {
         const errorMessages = Object.entries(errorData.details)
-          .map(([field, messages]: [string, any]) => {
+          .map(([_, messages]: [string, any]) => {
             if (Array.isArray(messages)) {
               return messages.join(', ');
             }

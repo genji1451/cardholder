@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Spider-Man Cards Collection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-card: #1a1a1a;
+            --bg-card-hover: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #999999;
+            --border-color: #2a2a2a;
+            --accent: #e31937;
+            --accent-blue: #0066cc;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-number {
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-right: 0.5rem;
+        }
+
+        .logo-text {
+            background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .user-name {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Main */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 7rem 2rem 4rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            background: var(--bg-card-hover);
+            border-color: #3a3a3a;
+            transform: translateY(-2px);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-value.accent {
+            background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            color: var(--accent-green);
+            margin-top: 0.5rem;
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .progress-percentage {
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 50px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-blue));
+            border-radius: 50px;
+            transition: width 1s ease;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.625rem 1.25rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* Collection Grid */
+        .collection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Card */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .card:hover {
+            background: var(--bg-card-hover);
+            border-color: #3a3a3a;
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(227, 25, 55, 0.15);
+        }
+
+        .card.owned {
+            border-color: var(--accent-green);
+        }
+
+        .card.missing {
+            opacity: 0.4;
+            filter: grayscale(1);
+        }
+
+        .card.missing:hover {
+            opacity: 0.6;
+        }
+
+        .card-image {
+            width: 100%;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 30% 50%, rgba(227, 25, 55, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(0, 102, 204, 0.1) 0%, transparent 50%);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            opacity: 0.4;
+            z-index: 1;
+        }
+
+        .card-badges {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .card-badge {
+            background: var(--accent);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .card-badge.owned {
+            background: var(--accent-green);
+        }
+
+        .card-badge.rare {
+            background: var(--accent-yellow);
+        }
+
+        .card-badge.quantity {
+            background: var(--accent-blue);
+        }
+
+        .card-content {
+            padding: 1rem;
+        }
+
+        .card-number {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .card-rarity {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .card-price {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--bg-card);
+            border: 1px dashed var(--border-color);
+            border-radius: 16px;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-text {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.875rem 2rem;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            background: #c91530;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .filters {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 0.5rem;
+            }
+
+            .collection-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+
+            .card-icon {
+                font-size: 2rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.05s; }
+        .card:nth-child(2) { animation-delay: 0.1s; }
+        .card:nth-child(3) { animation-delay: 0.15s; }
+        .card:nth-child(4) { animation-delay: 0.2s; }
+        .card:nth-child(5) { animation-delay: 0.25s; }
+        .card:nth-child(6) { animation-delay: 0.3s; }
+        .card:nth-child(7) { animation-delay: 0.35s; }
+        .card:nth-child(8) { animation-delay: 0.4s; }
+        .card:nth-child(9) { animation-delay: 0.45s; }
+        .card:nth-child(10) { animation-delay: 0.5s; }
+        .card:nth-child(11) { animation-delay: 0.55s; }
+        .card:nth-child(12) { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-number">099</span>
+                <span class="logo-text">Portfolio</span>
+            </div>
+            <div class="user-info">
+                <span class="user-name">@spiderfan</span>
+                <div class="user-avatar">🕷️</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <main class="main">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Моя коллекция</h1>
+            <p class="page-subtitle">Управляйте своей коллекцией карточек Spider-Man</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Всего карточек</div>
+                <div class="stat-value">825</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">В коллекции</div>
+                <div class="stat-value accent">247</div>
+                <div class="stat-change">+12 за неделю</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Завершено</div>
+                <div class="stat-value">29.9%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Стоимость</div>
+                <div class="stat-value">₽18,450</div>
+            </div>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="progress-section">
+            <div class="progress-header">
+                <div class="progress-title">Прогресс коллекции</div>
+                <div class="progress-percentage">247 / 825</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 29.9%"></div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <button class="filter-btn active">Все (247)</button>
+            <button class="filter-btn">Обычные (185)</button>
+            <button class="filter-btn">Необычные (48)</button>
+            <button class="filter-btn">Редкие (14)</button>
+            <button class="filter-btn">Серия 1 (98)</button>
+            <button class="filter-btn">Серия 2 (89)</button>
+            <button class="filter-btn">Серия 3 (60)</button>
+        </div>
+
+        <!-- Collection Grid -->
+        <div class="collection-grid">
+            <!-- Owned Card with Quantity -->
+            <div class="card owned">
+                <div class="card-image">
+                    <div class="card-icon">🕷️</div>
+                    <div class="card-badges">
+                        <div class="card-badge owned">✓</div>
+                        <div class="card-badge quantity">× 3</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-number">C 001</div>
+                    <h3 class="card-title">Человек-Паук</h3>
+                    <div class="card-meta">
+                        <span class="card-rarity">Обычная</span>
+                        <span class="card-price">₽52.50</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Owned Rare Card -->
+            <div class="card owned">
+                <div class="card-image">
+                    <div class="card-icon">🎃</div>
+                    <div class="card-badges">
+                        <div class="card-badge owned">✓</div>
+                        <div class="card-badge rare">Редкая</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-number">G 156</div>
+                    <h3 class="card-title">Зеленый Гоблин</h3>
+                    <div class="card-meta">
+                        <span class="card-rarity">Редкая</span>
+                        <span class="card-price">₽125.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Owned Card -->
+            <div class="card owned">
+                <div class="card-image">
+                    <div class="card-icon">🎭</div>
+                    <div class="card-badges">
+                        <div class="card-badge owned">✓</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-number">V 042</div>
+                    <h3 class="card-title">Веном</h3>
+                    <div class="card-meta">
+                        <span class="card-rarity">Необычная</span>
+                        <span class="card-price">₽92.50</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Missing Card -->
+            <div class="card missing">
+                <div class="card-image">
+                    <div class="card-icon">⚡</div>
+                </div>
+                <div class="card-content">
+                    <div class="card-number">E 138</div>
+                    <h3 class="card-title">Электро</h3>
+                    <div class="card-meta">
+                        <span class="card-rarity">Обычная</span>
+                        <span class="card-price">₽78.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Owned Card -->
+            <div class="card owned">
+                <div class="card-image">
+                    <div class="card-icon">🦾</div>
+                    <div class="card-badges">
+                        <div class="card-badge owned">✓</div>
+                        <div class="card-badge quantity">× 2</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-number">D 089</div>
+                    <h3 class="card-title">Доктор Октопус</h3>
+                    <div class="card-meta">
+                        <span class="card-rarity">Необычная</span>
+                        <span class="card-price">₽85.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Missing Card -->
+            <div class="card missing">
+                <div class="card-image">
+                    <div class="card-icon">❄️</div>
+                </div>
+                <div class="card-content">
+                    <div class="card-number">M 234</div>
+                    <h3 class="card-title">Мистер Негатив</h3>
+                    <div class="card-meta">
+                        <span class="card-rarity">Редкая</span>
+                        <span class="card-price">₽110.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Owned Card -->
+            <div class="card owned">
+                <div class="card-image">
+                    <div class="card-icon">🏙️</div>
+                    <div class="card-badges">
+                        <div class="card-badge owned">✓</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-number">M 203</div>
+                    <h3 class="card-title">Майлз Моралес</h3>
+                    <div class="card-meta">
+                        <span class="card-rarity">Обычная</span>
+                        <span class="card-price">₽68.50</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Missing Card -->
+            <div class="card missing">
+                <div class="card-image">
+                    <div class="card-icon">🦂</div>
+                </div>
+                <div class="card-content">
+                    <div class="card-number">S 412</div>
+                    <h3 class="card-title">Скорпион</h3>
+                    <div class="card-meta">
+                        <span class="card-rarity">Обычная</span>
+                        <span class="card-price">₽72.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Owned Rare Card -->
+            <div class="card owned">
+                <div class="card-image">
+                    <div class="card-icon">🕸️</div>
+                    <div class="card-badges">
+                        <div class="card-badge owned">✓</div>
+                        <div class="card-badge rare">Редкая</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-number">K 567</div>
+                    <h3 class="card-title">Карнаж</h3>
+                    <div class="card-meta">
+                        <span class="card-rarity">Редкая</span>
+                        <span class="card-price">₽142.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Missing Card -->
+            <div class="card missing">
+                <div class="card-image">
+                    <div class="card-icon">🦎</div>
+                </div>
+                <div class="card-content">
+                    <div class="card-number">L 298</div>
+                    <h3 class="card-title">Ящер</h3>
+                    <div class="card-meta">
+                        <span class="card-rarity">Обычная</span>
+                        <span class="card-price">₽65.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Owned Card -->
+            <div class="card owned">
+                <div class="card-image">
+                    <div class="card-icon">🎪</div>
+                    <div class="card-badges">
+                        <div class="card-badge owned">✓</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-number">H 145</div>
+                    <h3 class="card-title">Хобгоблин</h3>
+                    <div class="card-meta">
+                        <span class="card-rarity">Необычная</span>
+                        <span class="card-price">₽88.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Missing Card -->
+            <div class="card missing">
+                <div class="card-image">
+                    <div class="card-icon">🐙</div>
+                </div>
+                <div class="card-content">
+                    <div class="card-number">K 789</div>
+                    <h3 class="card-title">Кравен</h3>
+                    <div class="card-meta">
+                        <span class="card-rarity">Необычная</span>
+                        <span class="card-price">₽95.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Card click
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function() {
+                const cardNumber = this.querySelector('.card-number').textContent;
+                const cardTitle = this.querySelector('.card-title').textContent;
+                const isMissing = this.classList.contains('missing');
+                
+                if (isMissing) {
+                    alert(`${cardTitle} (${cardNumber})\n\nЭта карточка еще не в вашей коллекции.\nХотите добавить в список желаний?`);
+                } else {
+                    alert(`${cardTitle} (${cardNumber})\n\nЭта карточка есть в вашей коллекции!`);
+                }
+            });
+        });
+
+        // Animate progress bar on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelector('.progress-fill').style.width = '29.9%';
+            }, 500);
+        });
+    </script>
+</body>
+</html>
+

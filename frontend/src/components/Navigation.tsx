@@ -14,6 +14,7 @@ const Navigation = () => {
     { path: '/inventory', label: 'Инвентарь', icon: '📦' },
     { path: '/wishlist', label: 'Список желаний', icon: '💝' },
     { path: '/analytics', label: 'Аналитика', icon: '📈' },
+    { path: '/shop', label: 'Магазин', icon: '🛍️' },
   ];
 
   return (

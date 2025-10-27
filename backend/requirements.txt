@@ -8,7 +8,8 @@ djangorestframework-simplejwt
 environs
 whitenoise
 django-filter
-python-telegram-bot
+python-telegram-bot>=20.0
+qrcode[pil]>=7.4.2
 cryptography
 gunicorn
 dj-database-url

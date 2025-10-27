@@ -16,6 +16,7 @@ import AnalyticsPage from './pages/AnalyticsPage';
 import WishlistPage from './pages/WishlistPage';
 import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
+import ShopPage from './pages/ShopPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Enhanced Dashboard with real data and interactivity
@@ -362,6 +363,14 @@ const Dashboard = () => {
               <p>Отслеживание целей</p>
             </div>
           </a>
+          
+          <a href="/shop" className="action-card shop-highlight">
+            <div className="action-icon">🛍️</div>
+            <div className="action-content">
+              <h3>Магазин</h3>
+              <p>Купить карты и картины</p>
+            </div>
+          </a>
         </div>
       </div>
     </div>
@@ -437,6 +446,13 @@ function App() {
                 <ProtectedRoute>
                   <ProtectedLayout>
                     <AnalyticsPage />
+                  </ProtectedLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/shop" element={
+                <ProtectedRoute>
+                  <ProtectedLayout>
+                    <ShopPage />
                   </ProtectedLayout>
                 </ProtectedRoute>
               } />

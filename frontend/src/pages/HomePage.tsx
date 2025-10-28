@@ -17,10 +17,13 @@ const HomePage = () => {
             Отслеживай прогресс, анализируй инвестиции и управляй своей коллекцией.
           </p>
           <div className="hero-actions">
-            <Link to="/auth" className="cta-button primary">
+            <Link to="/shop" className="cta-button primary">
+              🛍️ Магазин
+            </Link>
+            <Link to="/auth" className="cta-button secondary">
               🚀 Начать работу
             </Link>
-            <Link to="/dashboard" className="cta-button secondary">
+            <Link to="/dashboard" className="cta-button tertiary">
               👀 Посмотреть демо
             </Link>
           </div>
@@ -58,30 +61,30 @@ const HomePage = () => {
               <div className="card-gradient"></div>
             </Link>
 
-            {/* Teenage Mutant Ninja Turtles Collection */}
-            <div className="collection-card turtles disabled">
+            {/* Shop Collection */}
+            <Link to="/shop" className="collection-card shop">
               <div className="card-header">
-                <span className="card-icon">🐢</span>
-                <div className="status-badge coming">
+                <span className="card-icon">🛍️</span>
+                <div className="status-badge ready">
                   <span className="badge-dot"></span>
-                  Скоро
+                  Доступно
                 </div>
               </div>
               
-              <h3 className="card-title">Черепашки-ниндзя</h3>
-              <p className="card-subtitle">TMNT Collection</p>
+              <h3 className="card-title">Магазин</h3>
+              <p className="card-subtitle">Карты и Картины</p>
               
               <p className="card-description">
-                Коллекция карточек с Черепашками-ниндзя и их противниками
+                Покупайте редкие карточки и авторские картины Spider-Man
               </p>
               
               <div className="card-footer">
-                <span className="card-cta">В разработке</span>
-                <span className="card-arrow">⏳</span>
+                <span className="card-cta">Открыть магазин</span>
+                <span className="card-arrow">→</span>
               </div>
               
               <div className="card-gradient"></div>
-            </div>
+            </Link>
           </div>
         </div>
       </div>

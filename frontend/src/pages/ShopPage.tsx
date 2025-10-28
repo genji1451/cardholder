@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './ShopPage.css';
 
 interface Product {
@@ -117,6 +118,17 @@ const ShopPage = () => {
 
   return (
     <div className="shop-page">
+      {/* Simple Navigation */}
+      <nav className="shop-nav">
+        <Link to="/" className="shop-nav-logo">
+          🕷️ Portfolio Cards
+        </Link>
+        <div className="shop-nav-links">
+          <Link to="/" className="shop-nav-link">🏠 Главная</Link>
+          <Link to="/auth" className="shop-nav-link">🚀 Войти</Link>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <div className="shop-hero">
         <div className="hero-content">

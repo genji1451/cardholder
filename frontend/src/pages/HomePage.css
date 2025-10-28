@@ -145,6 +145,20 @@
   background: linear-gradient(135deg, #e31937, #0066cc);
   color: white;
   border-color: transparent;
+  box-shadow: 0 8px 24px rgba(227, 25, 55, 0.4);
+}
+
+.cta-button.tertiary {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.cta-button.tertiary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
 }
 
 .cta-button.primary:hover {
@@ -227,6 +241,11 @@
   box-shadow: 0 20px 60px rgba(231, 76, 60, 0.4);
 }
 
+.collection-card.shop:hover {
+  border-color: #e31937;
+  box-shadow: 0 20px 60px rgba(227, 25, 55, 0.4);
+}
+
 .collection-card.turtles:hover:not(.disabled) {
   border-color: #27ae60;
   box-shadow: 0 20px 60px rgba(39, 174, 96, 0.4);
@@ -256,6 +275,10 @@
 
 .collection-card.spiderman .card-gradient {
   background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.collection-card.shop .card-gradient {
+  background: linear-gradient(135deg, #e31937 0%, #0066cc 100%);
 }
 
 .collection-card.turtles .card-gradient {

@@ -449,13 +449,7 @@ function App() {
                   </ProtectedLayout>
                 </ProtectedRoute>
               } />
-              <Route path="/shop" element={
-                <ProtectedRoute>
-                  <ProtectedLayout>
-                    <ShopPage />
-                  </ProtectedLayout>
-                </ProtectedRoute>
-              } />
+              <Route path="/shop" element={<ShopPage />} />
             </Routes>
           </div>
         </Router>

@@ -7,6 +7,59 @@
   position: relative;
 }
 
+/* Simple Navigation */
+.shop-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid rgba(227, 25, 55, 0.3);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.shop-nav-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.shop-nav-logo:hover {
+  color: #e31937;
+  transform: scale(1.05);
+}
+
+.shop-nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.shop-nav-link {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.shop-nav-link:hover {
+  color: #fff;
+  background: rgba(227, 25, 55, 0.2);
+  border-color: rgba(227, 25, 55, 0.5);
+}
+
 /* Spider Web Background */
 .shop-page::before {
   content: '';

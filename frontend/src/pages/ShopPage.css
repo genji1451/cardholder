@@ -362,17 +362,33 @@
   transform: scale(1.1);
 }
 
+/* Недоступные карточки */
+.product-card.unavailable {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.product-card.unavailable:hover {
+  transform: none;
+  box-shadow: 0 8px 30px rgba(227, 25, 55, 0.2);
+}
+
+.product-card.unavailable:hover .product-image img {
+  transform: none;
+}
+
 .sold-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #e31937;
+  z-index: 20;
   font-size: 2rem;
   font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -606,15 +622,17 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(79, 70, 229, 0.85);
-  color: white;
+  background: rgba(0, 0, 0, 0.85);
+  color: #6366f1;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   text-transform: uppercase;
   letter-spacing: 1px;
+  z-index: 20;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 /* In Development Message */

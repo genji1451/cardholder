@@ -371,7 +371,10 @@ const ShopPage = () => {
             ) : (
               <div className="products-grid">
                 {filteredProducts.map(product => (
-                  <div key={product.id} className="product-card">
+                  <div 
+                    key={product.id} 
+                    className={`product-card ${(!product.available || product.inDevelopment) ? 'unavailable' : ''}`}
+                  >
                     <div className="product-image">
                       <img src={product.image} alt={product.title} />
                       {product.isLimited && product.limitedInfo && (
@@ -379,10 +382,12 @@ const ShopPage = () => {
                           ⭐ {product.limitedInfo}
                         </div>
                       )}
-                      {!product.available && !product.isLimited && (
+                      {/* Темный overlay для проданных карт */}
+                      {((!product.available && !product.inDevelopment) || (product.isLimited && product.stock === 0)) && (
                         <div className="sold-overlay">ПРОДАНО</div>
                       )}
-                      {product.inDevelopment && !product.isLimited && (
+                      {/* Темный overlay для карт в разработке */}
+                      {product.inDevelopment && (
                         <div className="dev-overlay">В РАЗРАБОТКЕ</div>
                       )}
                     </div>
@@ -426,11 +431,7 @@ const ShopPage = () => {
           >
             ✈️ Написать в Telegram
           </a>
-          <div className="payment-info">
-            <p className="payment-note">
-              💳 Принимаю: Перевод на карту, СБП, OZON Pay
-            </p>
-          </div>
+
         </div>
       </section>
 

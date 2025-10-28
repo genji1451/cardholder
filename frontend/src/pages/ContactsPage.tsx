@@ -38,12 +38,12 @@ const ContactsPage = () => {
             <div className="contact-details">
               <p>
                 <strong>Email:</strong><br />
-                <a href="mailto:support@portfolio.cards">support@portfolio.cards</a>
+                <a href="mailto:rextestudo@gmail.com">rextestudo@gmail.com</a>
               </p>
               <p>
                 <strong>Telegram:</strong><br />
-                <a href="https://t.me/your_username" target="_blank" rel="noopener noreferrer">
-                  @your_username
+                <a href="https://t.me/rex_testudo" target="_blank" rel="noopener noreferrer">
+                  @rex_testudo
                 </a>
               </p>
               <p className="response-time">
@@ -71,7 +71,6 @@ const ContactsPage = () => {
             <div className="contact-details">
               <p>✅ Банковские карты (Visa, MasterCard, МИР)</p>
               <p>✅ Система Быстрых Платежей (СБП)</p>
-              <p>✅ OZON Pay</p>
               <p className="secure-note">
                 🔒 Все платежи защищены и проходят через безопасные платежные шлюзы
               </p>
@@ -84,10 +83,10 @@ const ContactsPage = () => {
             <h2>Доставка</h2>
             <div className="contact-details">
               <p><strong>По России:</strong></p>
-              <p>• Почта России: от 300₽ (7-14 дней)</p>
-              <p>• СДЭК: от 350₽ (3-7 дней)</p>
-              <p>• Boxberry: от 320₽ (3-7 дней)</p>
-              <p><strong>Бесплатная доставка</strong> при заказе от 5000₽</p>
+              <p>• Ozon: от 99₽ (2-7 дней)</p>
+              <p>• Яндекс Доставка: 300₽ (1-3 дня)</p>
+              <p>• Почта России: от 100₽ (7-14 дней)</p>
+              <p><strong>🎁 Бесплатная доставка</strong> при заказе от 1000₽</p>
               <p className="info-note">
                 <Link to="/legal/delivery">Подробнее о доставке →</Link>
               </p>
@@ -116,7 +115,7 @@ const ContactsPage = () => {
           <p>Свяжитесь с нами любым удобным способом</p>
           <div className="feedback-buttons">
             <a 
-              href="https://t.me/your_username" 
+              href="https://t.me/rex_testudo" 
               target="_blank" 
               rel="noopener noreferrer"
               className="btn-telegram"
@@ -124,7 +123,7 @@ const ContactsPage = () => {
               ✈️ Написать в Telegram
             </a>
             <a 
-              href="mailto:support@portfolio.cards"
+              href="mailto:rextestudo@gmail.com"
               className="btn-email"
             >
               ✉️ Отправить Email

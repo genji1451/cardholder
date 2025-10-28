@@ -33,12 +33,12 @@ const Footer = () => {
           <ul className="footer-contacts">
             <li>
               <span className="contact-icon">✉️</span>
-              <a href="mailto:support@portfolio.cards">support@portfolio.cards</a>
+              <a href="mailto:rextestudo@gmail.com">rextestudo@gmail.com</a>
             </li>
             <li>
               <span className="contact-icon">✈️</span>
-              <a href="https://t.me/your_username" target="_blank" rel="noopener noreferrer">
-                Telegram
+              <a href="https://t.me/rex_testudo" target="_blank" rel="noopener noreferrer">
+                @rex_testudo
               </a>
             </li>
             <li>

@@ -1,6 +1,11 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 
+interface ProductOptions {
+  hasCase?: boolean;
+  filmType?: 'none' | 'holographic' | 'metallic';
+}
+
 interface Product {
   id: number;
   title: string;
@@ -14,6 +19,7 @@ interface Product {
   image: string;
   available: boolean;
   inDevelopment?: boolean;
+  options?: ProductOptions;
 }
 
 interface CartItem extends Product {
@@ -46,15 +52,24 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const addToCart = (product: Product) => {
     setCart(prevCart => {
-      const existingItem = prevCart.find(item => item.id === product.id);
+      // Проверяем наличие товара с такими же опциями
+      const existingItem = prevCart.find(item => {
+        const sameId = item.id === product.id;
+        const sameCase = item.options?.hasCase === product.options?.hasCase;
+        const sameFilm = item.options?.filmType === product.options?.filmType;
+        return sameId && sameCase && sameFilm;
+      });
       
       if (existingItem) {
         // Увеличиваем количество
-        return prevCart.map(item =>
-          item.id === product.id
+        return prevCart.map(item => {
+          const sameId = item.id === product.id;
+          const sameCase = item.options?.hasCase === product.options?.hasCase;
+          const sameFilm = item.options?.filmType === product.options?.filmType;
+          return sameId && sameCase && sameFilm
             ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
+            : item;
+        });
       } else {
         // Добавляем новый товар
         return [...prevCart, { ...product, quantity: 1 }];

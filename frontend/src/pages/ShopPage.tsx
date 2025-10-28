@@ -4,6 +4,11 @@ import { useCart } from '../contexts/CartContext';
 import Footer from '../components/Footer';
 import './ShopPage.css';
 
+interface ProductOptions {
+  hasCase?: boolean;
+  filmType?: 'none' | 'holographic' | 'metallic';
+}
+
 interface Product {
   id: number;
   title: string;
@@ -17,6 +22,7 @@ interface Product {
   image: string;
   available: boolean;
   inDevelopment?: boolean;
+  options?: ProductOptions;
 }
 
 // Данные товаров
@@ -24,7 +30,7 @@ const mockProducts: Product[] = [
   // Мемная серия
   {
     id: 1,
-    title: "Мемная карта #001",
+    title: "Карточный картель #001",
     description: "Первая карта мемной серии. Лимитированный тираж.",
     price: 300,
     category: 'meme',
@@ -32,12 +38,12 @@ const mockProducts: Product[] = [
     limitedInfo: "ПРОДАНО",
     stock: 0,
     totalStock: 1,
-    image: '/images/spiderman/card_1_1.svg',
+    image: '/images/spiderman/001.png',
     available: false,
   },
   {
     id: 2,
-    title: "Мемная карта #002",
+    title: "Самозванцы #002",
     description: "Вторая карта мемной серии. Лимитированный тираж.",
     price: 300,
     category: 'meme',
@@ -45,55 +51,55 @@ const mockProducts: Product[] = [
     limitedInfo: "ПРОДАНО",
     stock: 0,
     totalStock: 1,
-    image: '/images/spiderman/card_1_2.svg',
+    image: '/images/spiderman/002.png',
     available: false,
   },
   {
     id: 3,
-    title: "Мемная карта #003",
+    title: "Спуди #003",
     description: "Третья карта мемной серии. Обычный тираж.",
     price: 300,
     category: 'meme',
     isLimited: false,
-    image: '/images/spiderman/card_1_3.svg',
+    image: '/images/spiderman/003.png',
     available: true,
   },
   {
     id: 4,
-    title: "Мемная карта #004",
+    title: "Женщина-невидимка #004",
     description: "Четвертая карта мемной серии. Лимитированный тираж.",
     price: 300,
     category: 'meme',
     isLimited: true,
-    limitedInfo: "ОСТАЛОСЬ 1 ШТ.",
-    stock: 1,
+    limitedInfo: "ПРОДАНО",
+    stock: 0,
     totalStock: 1,
-    image: '/images/spiderman/card_2_1.svg',
+    image: '/images/spiderman/004.png',
     available: true,
   },
   {
     id: 5,
-    title: "Мемная карта #005",
+    title: "Пачка кириешек#005",
     description: "Пятая карта мемной серии. Обычный тираж.",
     price: 300,
     category: 'meme',
     isLimited: false,
-    image: '/images/spiderman/card_2_2.svg',
+    image: '/images/spiderman/005.png',
     available: true,
   },
   {
     id: 6,
-    title: "Мемная карта #006",
+    title: "Стая собак #006",
     description: "Шестая карта мемной серии. Обычный тираж.",
     price: 300,
     category: 'meme',
     isLimited: false,
-    image: '/images/spiderman/card_2_3.svg',
+    image: '/images/spiderman/006.png',
     available: true,
   },
   {
     id: 7,
-    title: "Мемная карта #007",
+    title: "Собаки лают-караван прет #007",
     description: "Седьмая карта мемной серии. Лимитированный тираж.",
     price: 300,
     category: 'meme',
@@ -174,7 +180,7 @@ const mockProducts: Product[] = [
     limitedInfo: "ОСТАЛОСЬ 2 из 5",
     stock: 2,
     totalStock: 5,
-    image: '/images/spiderman/card_3_1.svg',
+    image: '/images/spiderman/spot.jpeg',
     available: true,
   },
   {
@@ -187,7 +193,7 @@ const mockProducts: Product[] = [
     limitedInfo: "ОСТАЛОСЬ 2 из 5",
     stock: 2,
     totalStock: 5,
-    image: '/images/spiderman/card_3_2.svg',
+    image: '/images/spiderman/daily.png',
     available: true,
   },
   // Дизайнерские карточки
@@ -197,7 +203,7 @@ const mockProducts: Product[] = [
     description: "Закажите уникальную карточку с вашим собственным дизайном! Отправьте нам свою идею, и мы воплотим её в жизнь.",
     price: 500,
     category: 'design',
-    image: '/images/spiderman/card_1_1.svg',
+    image: '/images/spiderman/personal.png',
     available: true,
   },
 ];
@@ -205,20 +211,53 @@ const mockProducts: Product[] = [
 const ShopPage = () => {
   const { addToCart, getTotalItems } = useCart();
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'original' | 'meme' | 'art' | 'design'>('all');
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [hasCase, setHasCase] = useState(false);
+  const [filmType, setFilmType] = useState<'none' | 'holographic' | 'metallic'>('none');
 
   const filteredProducts = mockProducts.filter(product => {
     return selectedCategory === 'all' || product.category === selectedCategory;
   });
 
+  const calculatePrice = (product: Product) => {
+    let totalPrice = product.price;
+    if (hasCase) totalPrice += 300;
+    if (filmType === 'holographic') totalPrice += 100;
+    if (filmType === 'metallic') totalPrice += 100;
+    return totalPrice;
+  };
 
-  const handleAddToCart = (product: Product) => {
+  const openProductModal = (product: Product) => {
     if (!product.available) return;
-    addToCart(product);
+    setSelectedProduct(product);
+    setHasCase(false);
+    setFilmType('none');
+  };
+
+  const closeProductModal = () => {
+    setSelectedProduct(null);
+    setHasCase(false);
+    setFilmType('none');
+  };
+
+  const handleAddToCart = () => {
+    if (!selectedProduct) return;
+    
+    const productWithOptions = {
+      ...selectedProduct,
+      price: calculatePrice(selectedProduct),
+      options: {
+        hasCase,
+        filmType
+      }
+    };
+    
+    addToCart(productWithOptions);
     
     // Показываем уведомление
     const notification = document.createElement('div');
     notification.className = 'cart-notification';
-    notification.textContent = `✓ "${product.title}" добавлен в корзину`;
+    notification.textContent = `✓ "${selectedProduct.title}" добавлен в корзину`;
     document.body.appendChild(notification);
     
     setTimeout(() => {
@@ -229,6 +268,8 @@ const ShopPage = () => {
       notification.classList.remove('show');
       setTimeout(() => notification.remove(), 300);
     }, 2000);
+    
+    closeProductModal();
   };
 
   return (
@@ -254,8 +295,7 @@ const ShopPage = () => {
       <div className="shop-hero">
         <div className="hero-content">
           <div className="shop-logo">🛍️</div>
-          <h1>Магазин коллекционера</h1>
-          <p>Редкие карточки и авторские картины Spider-Man</p>
+          <h1>CGC Shop</h1>
         </div>
         <div className="hero-spider-web"></div>
       </div>
@@ -352,13 +392,13 @@ const ShopPage = () => {
                       <p className="product-description">{product.description}</p>
                       
                       <div className="product-footer">
-                        <div className="product-price">₽{product.price.toLocaleString()}</div>
+                        <div className="product-price">от ₽{product.price.toLocaleString()}</div>
                         <button
                           className="buy-button"
-                          onClick={() => handleAddToCart(product)}
+                          onClick={() => openProductModal(product)}
                           disabled={!product.available}
                         >
-                          {product.inDevelopment ? '🚧 В разработке' : product.available ? '🛒 В корзину' : '❌ Продано'}
+                          {product.inDevelopment ? '🚧 В разработке' : product.available ? '👁️ Подробнее' : '❌ Продано'}
                         </button>
                       </div>
                     </div>
@@ -393,6 +433,118 @@ const ShopPage = () => {
           </div>
         </div>
       </section>
+
+      {/* Product Modal */}
+      {selectedProduct && (
+        <div className="modal-overlay" onClick={closeProductModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeProductModal}>✕</button>
+            
+            <div className="modal-body">
+              <div className="modal-image">
+                <img src={selectedProduct.image} alt={selectedProduct.title} />
+                {selectedProduct.isLimited && selectedProduct.limitedInfo && (
+                  <div className={`limited-badge ${selectedProduct.stock === 0 ? 'sold-out' : 'available'}`}>
+                    ⭐ {selectedProduct.limitedInfo}
+                  </div>
+                )}
+              </div>
+              
+              <div className="modal-info">
+                <h2>{selectedProduct.title}</h2>
+                <p className="modal-description">{selectedProduct.description}</p>
+                
+                {/* Options for Meme cards */}
+                {selectedProduct.category === 'meme' && (
+                  <div className="options-section">
+                    <h3>Выберите вариант:</h3>
+                    
+                    <div className="option-group">
+                      <label className="option-label">
+                        <input
+                          type="checkbox"
+                          checked={hasCase}
+                          onChange={(e) => setHasCase(e.target.checked)}
+                        />
+                        <span className="option-text">
+                          В кейсе <span className="option-price">+300₽</span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Options for Design cards */}
+                {selectedProduct.category === 'design' && (
+                  <div className="options-section">
+                    <h3>Выберите опции:</h3>
+                    
+                    <div className="option-group">
+                      <label className="option-label">
+                        <input
+                          type="checkbox"
+                          checked={hasCase}
+                          onChange={(e) => setHasCase(e.target.checked)}
+                        />
+                        <span className="option-text">
+                          В кейсе <span className="option-price">+300₽</span>
+                        </span>
+                      </label>
+                    </div>
+                    
+                    <div className="option-group">
+                      <h4>Тип пленки:</h4>
+                      <label className="option-label">
+                        <input
+                          type="radio"
+                          name="filmType"
+                          checked={filmType === 'none'}
+                          onChange={() => setFilmType('none')}
+                        />
+                        <span className="option-text">Без пленки</span>
+                      </label>
+                      
+                      <label className="option-label">
+                        <input
+                          type="radio"
+                          name="filmType"
+                          checked={filmType === 'holographic'}
+                          onChange={() => setFilmType('holographic')}
+                        />
+                        <span className="option-text">
+                          Голографическая <span className="option-price">+100₽</span>
+                        </span>
+                      </label>
+                      
+                      <label className="option-label">
+                        <input
+                          type="radio"
+                          name="filmType"
+                          checked={filmType === 'metallic'}
+                          onChange={() => setFilmType('metallic')}
+                        />
+                        <span className="option-text">
+                          Металлическая <span className="option-price">+100₽</span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="modal-footer">
+                  <div className="total-price">
+                    <span>Итого:</span>
+                    <span className="price-value">₽{calculatePrice(selectedProduct).toLocaleString()}</span>
+                  </div>
+                  <button className="add-to-cart-btn" onClick={handleAddToCart}>
+                    🛒 Добавить в корзину
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

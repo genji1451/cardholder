@@ -209,6 +209,18 @@ Email: ${deliveryForm.email}
                         ⭐ {item.limitedInfo}
                       </span>
                     )}
+                    {item.options && (
+                      <div className="cart-item-options">
+                        {item.options.hasCase && (
+                          <span className="option-badge">📦 В кейсе</span>
+                        )}
+                        {item.options.filmType && item.options.filmType !== 'none' && (
+                          <span className="option-badge">
+                            {item.options.filmType === 'holographic' ? '✨ Голографическая' : '⚙️ Металлическая'}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <div className="cart-item-quantity">
                     <button 

@@ -19,6 +19,8 @@ import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
 import ShopPage from './pages/ShopPage';
 import CartPage from './pages/CartPage';
+import ContactsPage from './pages/ContactsPage';
+import LegalPage from './pages/LegalPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Enhanced Dashboard with real data and interactivity
@@ -454,6 +456,8 @@ function App() {
               } />
               <Route path="/shop" element={<ShopPage />} />
               <Route path="/cart" element={<CartPage />} />
+              <Route path="/contacts" element={<ContactsPage />} />
+              <Route path="/legal/:section" element={<LegalPage />} />
             </Routes>
           </div>
         </Router>

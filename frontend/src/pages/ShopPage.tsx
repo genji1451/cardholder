@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
+import Footer from '../components/Footer';
 import './ShopPage.css';
 
 interface Product {
@@ -323,6 +324,8 @@ const ShopPage = () => {
           </div>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 };

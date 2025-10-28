@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import Footer from '../components/Footer';
 import './HomePage.css';
 
 const HomePage = () => {
@@ -122,10 +123,7 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="homepage-footer">
-        <p>© 2025 Collection Portfolio. Создано для коллекционеров.</p>
-      </footer>
+      <Footer />
     </div>
   );
 };

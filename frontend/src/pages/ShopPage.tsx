@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../contexts/CartContext';
 import './ShopPage.css';
 
 interface Product {
@@ -91,6 +92,7 @@ const mockProducts: Product[] = [
 ];
 
 const ShopPage = () => {
+  const { addToCart, getTotalItems } = useCart();
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'card' | 'art'>('all');
   const [selectedRarity, setSelectedRarity] = useState<'all' | 'common' | 'rare' | 'ultra'>('all');
 
@@ -111,9 +113,24 @@ const ShopPage = () => {
     }
   };
 
-  const handleBuyClick = (product: Product) => {
-    // Здесь будет логика покупки (Telegram Bot, Stripe и т.д.)
-    alert(`Для покупки "${product.title}" свяжитесь с нами в Telegram: @your_username`);
+  const handleAddToCart = (product: Product) => {
+    if (!product.available) return;
+    addToCart(product);
+    
+    // Показываем уведомление
+    const notification = document.createElement('div');
+    notification.className = 'cart-notification';
+    notification.textContent = `✓ "${product.title}" добавлен в корзину`;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.classList.add('show');
+    }, 10);
+    
+    setTimeout(() => {
+      notification.classList.remove('show');
+      setTimeout(() => notification.remove(), 300);
+    }, 2000);
   };
 
   return (
@@ -124,6 +141,12 @@ const ShopPage = () => {
           🕷️ Portfolio Cards
         </Link>
         <div className="shop-nav-links">
+          <Link to="/cart" className="shop-nav-link cart-link">
+            🛒 Корзина
+            {getTotalItems() > 0 && (
+              <span className="cart-badge">{getTotalItems()}</span>
+            )}
+          </Link>
           <Link to="/" className="shop-nav-link">🏠 Главная</Link>
           <Link to="/auth" className="shop-nav-link">🚀 Войти</Link>
         </div>
@@ -264,10 +287,10 @@ const ShopPage = () => {
                     <div className="product-price">₽{product.price.toLocaleString()}</div>
                     <button
                       className="buy-button"
-                      onClick={() => handleBuyClick(product)}
+                      onClick={() => handleAddToCart(product)}
                       disabled={!product.available}
                     >
-                      {product.available ? '🛒 Купить' : '❌ Продано'}
+                      {product.available ? '🛒 В корзину' : '❌ Продано'}
                     </button>
                   </div>
                 </div>

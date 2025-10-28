@@ -6,6 +6,7 @@ import apiClient from './api/client';
 
 // Contexts
 import { AuthProvider } from './contexts/AuthContext';
+import { CartProvider } from './contexts/CartContext';
 
 // Components
 import Navigation from './components/Navigation';
@@ -17,6 +18,7 @@ import WishlistPage from './pages/WishlistPage';
 import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
 import ShopPage from './pages/ShopPage';
+import CartPage from './pages/CartPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Enhanced Dashboard with real data and interactivity
@@ -402,7 +404,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router>
+        <CartProvider>
+          <Router>
           <div className="app">
             <Routes>
               <Route path="/" element={<HomePage />} />
@@ -450,10 +453,12 @@ function App() {
                 </ProtectedRoute>
               } />
               <Route path="/shop" element={<ShopPage />} />
+              <Route path="/cart" element={<CartPage />} />
             </Routes>
           </div>
         </Router>
         <ReactQueryDevtools initialIsOpen={false} />
+        </CartProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

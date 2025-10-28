@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import Footer from '../components/Footer';
+import CheckoutForm from '../components/CheckoutForm';
 import './CartPage.css';
 
 interface DeliveryForm {
@@ -19,6 +20,7 @@ const CartPage = () => {
   const { cart, removeFromCart, updateQuantity, getTotalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   const [step, setStep] = useState<'cart' | 'delivery' | 'payment'>('cart');
+  const [showCheckout, setShowCheckout] = useState(false);
   const [deliveryForm, setDeliveryForm] = useState<DeliveryForm>({
     fullName: '',
     phone: '',
@@ -55,15 +57,6 @@ const CartPage = () => {
       deliveryForm.address.trim() !== '' &&
       deliveryForm.city.trim() !== ''
     );
-  };
-
-  const handleProceedToDelivery = () => {
-    if (cart.length === 0) {
-      alert('Корзина пуста!');
-      return;
-    }
-    setStep('delivery');
-    window.scrollTo(0, 0);
   };
 
   const handleProceedToPayment = () => {
@@ -264,8 +257,8 @@ Email: ${deliveryForm.email}
                 <span>Итого:</span>
                 <span>₽{finalPrice.toLocaleString()}</span>
               </div>
-              <button onClick={handleProceedToDelivery} className="btn-checkout">
-                Перейти к оформлению →
+              <button onClick={() => setShowCheckout(true)} className="btn-checkout">
+                💳 Оплатить через Robokassa
               </button>
               <Link to="/shop" className="btn-continue-shopping">
                 ← Продолжить покупки
@@ -467,6 +460,10 @@ Email: ${deliveryForm.email}
           </div>
         )}
       </div>
+
+      {showCheckout && (
+        <CheckoutForm onClose={() => setShowCheckout(false)} />
+      )}
 
       <Footer />
     </div>

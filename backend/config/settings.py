@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'apps.wishlist',
     'apps.analytics',
     'telegram_bot',  # Telegram Bot
+    'payments',  # Payment system
     #'apps.sync',
     #'apps.media',
 ]
@@ -267,3 +268,14 @@ if not DEBUG:
         'https://cardholder.onrender.com',
         'https://*.vercel.app',  # Allow Vercel deployments
     ])
+
+# Robokassa Payment Settings
+ROBOKASSA_LOGIN = 'cgcshop'
+ROBOKASSA_PASSWORD1 = 'I05RcmOf5xlU1uc4qVLG'
+ROBOKASSA_PASSWORD2 = 'md8Jh3QyTdgJ39uDF2kN'
+ROBOKASSA_TEST_MODE = True
+
+# Payment URLs
+ROBOKASSA_SUCCESS_URL = 'https://portfolio.cards/payment/success/'
+ROBOKASSA_FAIL_URL = 'https://portfolio.cards/payment/fail/'
+ROBOKASSA_RESULT_URL = 'https://portfolio.cards/api/payment/robokassa/result/'

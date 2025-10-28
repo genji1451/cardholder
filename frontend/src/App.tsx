@@ -22,6 +22,7 @@ import ShopPage from './pages/ShopPage';
 import CartPage from './pages/CartPage';
 import ContactsPage from './pages/ContactsPage';
 import LegalPage from './pages/LegalPage';
+import PaymentResult from './pages/PaymentResult';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Enhanced Dashboard with real data and interactivity
@@ -459,6 +460,8 @@ function App() {
               <Route path="/cart" element={<CartPage />} />
               <Route path="/contacts" element={<ContactsPage />} />
               <Route path="/legal/:section" element={<LegalPage />} />
+              <Route path="/payment/success" element={<PaymentResult success={true} />} />
+              <Route path="/payment/fail" element={<PaymentResult success={false} />} />
             </Routes>
           </div>
         </Router>

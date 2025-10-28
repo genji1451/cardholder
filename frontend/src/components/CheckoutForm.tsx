@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '../contexts/CartContext';
 import { paymentApi, type CreateOrderRequest } from '../api/payment';
 import './CheckoutForm.css';
@@ -17,7 +17,7 @@ const CheckoutForm = ({ onClose }: CheckoutFormProps) => {
     phone: '',
     delivery_address: '',
     delivery_method: 'Ozon',
-    delivery_cost: 0
+    delivery_cost: 150
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -33,9 +33,9 @@ const CheckoutForm = ({ onClose }: CheckoutFormProps) => {
     if (total >= 1000) return 0; // Бесплатная доставка от 1000₽
     
     switch (method) {
-      case 'Ozon': return 99;
+      case 'Ozon': return 150;
       case 'Яндекс Доставка': return 300;
-      case 'Почта России': return 100;
+      case 'Почта России': return 150;
       default: return 0;
     }
   };
@@ -49,6 +49,15 @@ const CheckoutForm = ({ onClose }: CheckoutFormProps) => {
       delivery_cost: cost
     }));
   };
+
+  // Автоматически обновляем стоимость доставки при изменении суммы заказа
+  useEffect(() => {
+    const cost = calculateDeliveryCost(formData.delivery_method);
+    setFormData(prev => ({
+      ...prev,
+      delivery_cost: cost
+    }));
+  }, [getTotalPrice()]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -138,9 +147,9 @@ const CheckoutForm = ({ onClose }: CheckoutFormProps) => {
               value={formData.delivery_method}
               onChange={handleDeliveryMethodChange}
             >
-              <option value="Ozon">Ozon - от 99₽</option>
+              <option value="Ozon">Ozon - 150₽</option>
               <option value="Яндекс Доставка">Яндекс Доставка - 300₽</option>
-              <option value="Почта России">Почта России - от 100₽</option>
+              <option value="Почта России">Почта России - 150₽</option>
             </select>
           </div>
 

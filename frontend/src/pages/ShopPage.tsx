@@ -9,7 +9,7 @@ interface Product {
   title: string;
   description: string;
   price: number;
-  category: 'original' | 'meme' | 'art';
+  category: 'original' | 'meme' | 'art' | 'design';
   isLimited?: boolean;
   limitedInfo?: string;
   stock?: number;
@@ -163,7 +163,7 @@ const mockProducts: Product[] = [
     available: false,
     inDevelopment: true,
   },
-  // Дизайнерские карты (Картины)
+  // Картины
   {
     id: 101,
     title: "Пятно",
@@ -190,11 +190,21 @@ const mockProducts: Product[] = [
     image: '/images/spiderman/card_3_2.svg',
     available: true,
   },
+  // Дизайнерские карточки
+  {
+    id: 201,
+    title: "Персональная карточка",
+    description: "Закажите уникальную карточку с вашим собственным дизайном! Отправьте нам свою идею, и мы воплотим её в жизнь.",
+    price: 500,
+    category: 'design',
+    image: '/images/spiderman/card_1_1.svg',
+    available: true,
+  },
 ];
 
 const ShopPage = () => {
   const { addToCart, getTotalItems } = useCart();
-  const [selectedCategory, setSelectedCategory] = useState<'all' | 'original' | 'meme' | 'art'>('all');
+  const [selectedCategory, setSelectedCategory] = useState<'all' | 'original' | 'meme' | 'art' | 'design'>('all');
 
   const filteredProducts = mockProducts.filter(product => {
     return selectedCategory === 'all' || product.category === selectedCategory;
@@ -277,7 +287,13 @@ const ShopPage = () => {
               className={selectedCategory === 'art' ? 'active' : ''}
               onClick={() => setSelectedCategory('art')}
             >
-              🎨 Дизайнерские карты
+              🎨 Картины
+            </button>
+            <button
+              className={selectedCategory === 'design' ? 'active' : ''}
+              onClick={() => setSelectedCategory('design')}
+            >
+              ✨ Дизайнерские карточки
             </button>
           </div>
         </div>
@@ -298,7 +314,8 @@ const ShopPage = () => {
               <h2>
                 {selectedCategory === 'all' && '🌐 Все товары'}
                 {selectedCategory === 'meme' && '😄 Мемная серия'}
-                {selectedCategory === 'art' && '🎨 Дизайнерские карты'}
+                {selectedCategory === 'art' && '🎨 Картины'}
+                {selectedCategory === 'design' && '✨ Дизайнерские карточки'}
               </h2>
               <div className="products-count">
                 Найдено: {filteredProducts.length}

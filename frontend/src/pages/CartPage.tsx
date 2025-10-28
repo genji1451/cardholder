@@ -201,7 +201,8 @@ Email: ${deliveryForm.email}
                     <h3>{item.title}</h3>
                     <p className="cart-item-category">
                       {item.category === 'original' ? '⭐ Оригинальная серия' : 
-                       item.category === 'meme' ? '😄 Мемная серия' : '🎨 Дизайнерская карта'}
+                       item.category === 'meme' ? '😄 Мемная серия' :
+                       item.category === 'art' ? '🎨 Картина' : '✨ Дизайнерская карточка'}
                     </p>
                     {item.isLimited && item.limitedInfo && (
                       <span className="limited-tag">

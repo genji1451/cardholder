@@ -6,7 +6,7 @@ interface Product {
   title: string;
   description: string;
   price: number;
-  category: 'original' | 'meme' | 'art';
+  category: 'original' | 'meme' | 'art' | 'design';
   isLimited?: boolean;
   limitedInfo?: string;
   stock?: number;

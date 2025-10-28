@@ -200,12 +200,12 @@ Email: ${deliveryForm.email}
                   <div className="cart-item-info">
                     <h3>{item.title}</h3>
                     <p className="cart-item-category">
-                      {item.category === 'card' ? '🎴 Карточка' : '🎨 Картина'}
+                      {item.category === 'original' ? '⭐ Оригинальная серия' : 
+                       item.category === 'meme' ? '😄 Мемная серия' : '🎨 Дизайнерская карта'}
                     </p>
-                    {item.rarity && (
-                      <span className={`rarity-tag ${item.rarity}`}>
-                        {item.rarity === 'common' ? '🟢 Обычная' : 
-                         item.rarity === 'rare' ? '🟡 Редкая' : '🔴 Ультра'}
+                    {item.isLimited && item.limitedInfo && (
+                      <span className="limited-tag">
+                        ⭐ {item.limitedInfo}
                       </span>
                     )}
                   </div>

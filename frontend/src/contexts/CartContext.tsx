@@ -6,10 +6,14 @@ interface Product {
   title: string;
   description: string;
   price: number;
-  category: 'card' | 'art';
-  rarity?: 'common' | 'rare' | 'ultra';
+  category: 'original' | 'meme' | 'art';
+  isLimited?: boolean;
+  limitedInfo?: string;
+  stock?: number;
+  totalStock?: number;
   image: string;
   available: boolean;
+  inDevelopment?: boolean;
 }
 
 interface CartItem extends Product {

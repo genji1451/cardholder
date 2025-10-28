@@ -34,9 +34,8 @@ const CartPage = () => {
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'sbp' | 'ozon'>('card');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const deliveryPrice = 500; // Стоимость доставки
   const totalPrice = getTotalPrice();
-  const finalPrice = totalPrice + deliveryPrice;
+  const finalPrice = totalPrice; // Убираем стоимость доставки из корзины
 
   const handleQuantityChange = (productId: number, change: number) => {
     const item = cart.find(item => item.id === productId);
@@ -93,7 +92,6 @@ const CartPage = () => {
 ${cart.map(item => `- ${item.title} x${item.quantity} = ₽${(item.price * item.quantity).toLocaleString()}`).join('\n')}
 
 💰 Стоимость товаров: ₽${totalPrice.toLocaleString()}
-🚚 Доставка: ₽${deliveryPrice.toLocaleString()}
 💳 ИТОГО: ₽${finalPrice.toLocaleString()}
 
 👤 Покупатель:
@@ -166,23 +164,7 @@ Email: ${deliveryForm.email}
       </nav>
 
       <div className="cart-container">
-        {/* Progress Steps */}
-        <div className="checkout-steps">
-          <div className={`step ${step === 'cart' ? 'active' : 'completed'}`}>
-            <div className="step-number">1</div>
-            <div className="step-label">Корзина</div>
-          </div>
-          <div className={`step ${step === 'delivery' ? 'active' : step === 'payment' ? 'completed' : ''}`}>
-            <div className="step-number">2</div>
-            <div className="step-label">Доставка</div>
-          </div>
-          <div className={`step ${step === 'payment' ? 'active' : ''}`}>
-            <div className="step-number">3</div>
-            <div className="step-label">Оплата</div>
-          </div>
-        </div>
-
-        {/* Cart Step */}
+        {/* Cart Content */}
         {step === 'cart' && (
           <div className="cart-content">
             <div className="cart-items">
@@ -248,10 +230,6 @@ Email: ${deliveryForm.email}
               <div className="summary-row">
                 <span>Товары:</span>
                 <span>₽{totalPrice.toLocaleString()}</span>
-              </div>
-              <div className="summary-row">
-                <span>Доставка:</span>
-                <span>₽{deliveryPrice.toLocaleString()}</span>
               </div>
               <div className="summary-total">
                 <span>Итого:</span>
@@ -429,10 +407,6 @@ Email: ${deliveryForm.email}
                     <span>₽{(item.price * item.quantity).toLocaleString()}</span>
                   </div>
                 ))}
-              </div>
-              <div className="summary-row">
-                <span>Доставка:</span>
-                <span>₽{deliveryPrice.toLocaleString()}</span>
               </div>
               <div className="summary-total">
                 <span>К оплате:</span>

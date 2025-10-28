@@ -32,11 +32,11 @@ const Footer = () => {
           <h3>Контакты</h3>
           <ul className="footer-contacts">
             <li>
-              <a href="mailto:rextestudo@gmail.com">rextestudo@gmail.com</a>
+              <a href="mailto:rextestudo@gmail.com">MAIL:rextestudo@gmail.com</a>
             </li>
             <li>
               <a href="https://t.me/rex_testudo" target="_blank" rel="noopener noreferrer">
-                @rex_testudo
+                TELEGRAM: @rex_testudo
               </a>
             </li>
             <li>

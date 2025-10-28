@@ -13,6 +13,7 @@ import Navigation from './components/Navigation';
 import SimplePortfolio from './components/SimplePortfolio';
 import CatalogGrid from './components/Catalog/CatalogGrid';
 import InventoryGrid from './components/Inventory/InventoryGrid';
+import CookieConsent from './components/CookieConsent';
 import AnalyticsPage from './pages/AnalyticsPage';
 import WishlistPage from './pages/WishlistPage';
 import HomePage from './pages/HomePage';
@@ -461,6 +462,7 @@ function App() {
             </Routes>
           </div>
         </Router>
+        <CookieConsent />
         <ReactQueryDevtools initialIsOpen={false} />
         </CartProvider>
       </AuthProvider>

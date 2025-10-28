@@ -415,8 +415,8 @@ const legalContent: Record<string, { title: string; content: ReactElement }> = {
 
         <h2>Как оформить возврат</h2>
         <ol>
-          <li>Свяжитесь с нами по email <a href="mailto:support@portfolio.cards">support@portfolio.cards</a> 
-          или Telegram <a href="https://t.me/your_username">@your_username</a></li>
+          <li>Свяжитесь с нами по email <a href="mailto:rextestudo@gmail.com">rextestudo@gmail.com</a> 
+          или Telegram <a href="https://t.me/rex_testudo">@rex_testudo</a></li>
           <li>Укажите номер заказа и причину возврата</li>
           <li>Мы отправим вам инструкции по возврату</li>
           <li>Отправьте товар обратно в оригинальной упаковке</li>
@@ -657,8 +657,8 @@ const LegalPage = () => {
             <div className="legal-contact">
               <p>Вопросы? Свяжитесь с нами:</p>
               <p>
-                Email: <a href="mailto:support@portfolio.cards">support@portfolio.cards</a> | 
-                Telegram: <a href="https://t.me/your_username">@your_username</a>
+                Email: <a href="mailto:rextestudo@gmail.com">rextestudo@gmail.com</a> | 
+                Telegram: <a href="https://t.me/rex_testudo">@rex_testudo</a>
               </p>
             </div>
           </div>

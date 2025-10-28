@@ -310,7 +310,7 @@ const ShopPage = () => {
             Напишите мне в Telegram!
           </p>
           <a 
-            href="https://t.me/your_username" 
+            href="https://t.me/rex_testudo" 
             target="_blank" 
             rel="noopener noreferrer"
             className="telegram-button"

@@ -14,6 +14,7 @@ export interface OrderItem {
 export interface CreateOrderRequest {
   email: string;
   phone?: string;
+  telegram_username?: string;
   delivery_address?: string;
   delivery_method?: string;
   delivery_cost?: number;

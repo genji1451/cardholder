@@ -19,7 +19,7 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-            'id', 'email', 'phone', 'total_amount', 'status',
+            'id', 'email', 'phone', 'telegram_username', 'total_amount', 'status',
             'delivery_address', 'delivery_method', 'delivery_cost',
             'created_at', 'items'
         ]
@@ -42,6 +42,7 @@ class CreateOrderSerializer(serializers.Serializer):
     """Сериализатор для создания заказа"""
     email = serializers.EmailField()
     phone = serializers.CharField(max_length=20, required=False, allow_blank=True)
+    telegram_username = serializers.CharField(max_length=100, required=False, allow_blank=True)
     delivery_address = serializers.CharField(required=False, allow_blank=True)
     delivery_method = serializers.CharField(max_length=100, required=False, allow_blank=True)
     delivery_cost = serializers.DecimalField(max_digits=10, decimal_places=2, default=0)

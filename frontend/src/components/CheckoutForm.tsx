@@ -15,6 +15,7 @@ const CheckoutForm = ({ onClose }: CheckoutFormProps) => {
   const [formData, setFormData] = useState({
     email: '',
     phone: '',
+    telegram_username: '',
     delivery_address: '',
     delivery_method: 'Ozon',
     delivery_cost: 150
@@ -69,6 +70,7 @@ const CheckoutForm = ({ onClose }: CheckoutFormProps) => {
       const orderData: CreateOrderRequest = {
         email: formData.email,
         phone: formData.phone,
+        telegram_username: formData.telegram_username,
         delivery_address: formData.delivery_address,
         delivery_method: formData.delivery_method,
         delivery_cost: formData.delivery_cost,
@@ -136,6 +138,18 @@ const CheckoutForm = ({ onClose }: CheckoutFormProps) => {
               value={formData.phone}
               onChange={handleInputChange}
               placeholder="+7 (999) 123-45-67"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="telegram_username">Ник в Telegram (для связи)</label>
+            <input
+              type="text"
+              id="telegram_username"
+              name="telegram_username"
+              value={formData.telegram_username}
+              onChange={handleInputChange}
+              placeholder="@username или username"
             />
           </div>
 

@@ -76,11 +76,49 @@ def create_order(request):
             
             robokassa_url = "https://auth.robokassa.ru/Merchant/Index.aspx"
             
+            # Формируем описание заказа с товарами, контактами и адресом
+            # Robokassa ограничивает Description до 100 символов, делаем компактно
+            items_list = []
+            for item in order.items.all():
+                items_list.append(f"{item.product_title} x{item.quantity}")
+            
+            # Собираем информацию для описания
+            description_parts = []
+            
+            # Товары (первые 30 символов)
+            items_str = ", ".join(items_list)[:30]
+            if items_str:
+                description_parts.append(f"Товары: {items_str}")
+            
+            # Email (первые 20 символов)
+            if order.email:
+                email_str = order.email[:20]
+                description_parts.append(f"Email: {email_str}")
+            
+            # Адрес доставки (первые 20 символов)
+            if order.delivery_address:
+                address_str = order.delivery_address[:20]
+                description_parts.append(f"Адрес: {address_str}")
+            
+            # Ник в телеграм (если указан)
+            if order.telegram_username:
+                telegram_str = order.telegram_username[:15]
+                description_parts.append(f"TG: {telegram_str}")
+            
+            # Если ничего не добавилось, используем ID заказа
+            if not description_parts:
+                description = f"Заказ {str(order.id)[:50]}"
+            else:
+                description = " | ".join(description_parts)
+                # Ограничиваем до 100 символов (лимит Robokassa)
+                if len(description) > 100:
+                    description = description[:97] + "..."
+            
             payment_data = {
                 'MerchantLogin': settings.ROBOKASSA_LOGIN,
                 'OutSum': amount_str,
                 'InvId': inv_id,
-                'Description': f"Заказ {str(order.id)[:50]}",  # Ограничиваем длину описания
+                'Description': description,
                 'SignatureValue': signature,
                 'Culture': 'ru',
                 'Encoding': 'utf-8',

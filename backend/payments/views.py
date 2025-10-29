@@ -58,24 +58,24 @@ def create_order(request):
             
             # Генерируем URL для оплаты
             signature = payment.generate_signature()
-        
-        robokassa_url = f"https://auth.robokassa.ru/Merchant/Index.aspx"
-        if settings.ROBOKASSA_TEST_MODE:
+            
             robokassa_url = f"https://auth.robokassa.ru/Merchant/Index.aspx"
-        
-        payment_data = {
-            'MerchantLogin': settings.ROBOKASSA_LOGIN,
-            'OutSum': str(payment.amount),
-            'InvId': str(order.id),
-            'Description': f"Заказ #{order.id}",
-            'SignatureValue': signature,
-            'Culture': 'ru',
-            'Encoding': 'utf-8',
-            'IsTest': 1 if settings.ROBOKASSA_TEST_MODE else 0,
-            'SuccessURL': settings.ROBOKASSA_SUCCESS_URL,
-            'FailURL': settings.ROBOKASSA_FAIL_URL,
-        }
-        
+            if settings.ROBOKASSA_TEST_MODE:
+                robokassa_url = f"https://auth.robokassa.ru/Merchant/Index.aspx"
+            
+            payment_data = {
+                'MerchantLogin': settings.ROBOKASSA_LOGIN,
+                'OutSum': str(payment.amount),
+                'InvId': str(order.id),
+                'Description': f"Заказ #{order.id}",
+                'SignatureValue': signature,
+                'Culture': 'ru',
+                'Encoding': 'utf-8',
+                'IsTest': 1 if settings.ROBOKASSA_TEST_MODE else 0,
+                'SuccessURL': settings.ROBOKASSA_SUCCESS_URL,
+                'FailURL': settings.ROBOKASSA_FAIL_URL,
+            }
+            
             logger.info(f"Payment created: {payment.id}, amount: {payment.amount}")
             
             response = Response({

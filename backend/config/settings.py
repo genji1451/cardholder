@@ -155,26 +155,28 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS
-CORS_ALLOWED_ORIGINS = [
-    'https://portfolio.cards',
-    'https://spiderman-cards-portfolio.vercel.app',
-    'https://spiderman-cards-portfolio-git-main.vercel.app',
-    'https://cardholder.onrender.com',  # Allow same origin
-    'http://localhost:5173',
-    'http://localhost:5174',
-    *(h.strip() for h in os.getenv('CORS_ALLOWED_ORIGINS', '').split(',') if h.strip()),
-]
-
-# Allow all Vercel preview deployments
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https://.*\.vercel\.app$",
-]
-
-# CORS
+# CORS - радикальное исправление
+CORS_ALLOW_ALL_ORIGINS = True  # Разрешаем все источники
 CORS_ALLOW_CREDENTIALS = True
-# Временно разрешаем все источники, чтобы снять блокировку браузера
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 
 # CORS Headers
 CORS_ALLOW_HEADERS = [

@@ -20,10 +20,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-@api_view(['POST'])
+@api_view(['POST', 'OPTIONS'])
 @permission_classes([AllowAny])
 def create_order(request):
     """Создание заказа и подготовка к оплате"""
+    # Обработка OPTIONS запроса для CORS
+    if request.method == 'OPTIONS':
+        return Response(status=status.HTTP_200_OK)
+    
     try:
         logger.info(f"Creating order with data: {request.data}")
         

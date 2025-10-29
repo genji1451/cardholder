@@ -61,23 +61,33 @@ class CreateOrderSerializer(serializers.Serializer):
         delivery_cost = validated_data.get('delivery_cost', 0)
         total_amount += float(delivery_cost)
         
-        # Проверяем наличие поля telegram_username в модели (на случай если миграция не применена)
+        # Извлекаем telegram_username из validated_data (если миграция не применена, поле не существует)
         telegram_username = validated_data.pop('telegram_username', None)
         
-        # Создаем заказ с вычисленной суммой
-        order = Order.objects.create(
-            total_amount=total_amount,
-            **validated_data
-        )
+        # Создаем словарь полей для создания заказа - исключаем telegram_username явно
+        order_data = {
+            'email': validated_data.get('email'),
+            'phone': validated_data.get('phone', ''),
+            'delivery_address': validated_data.get('delivery_address', ''),
+            'delivery_method': validated_data.get('delivery_method', ''),
+            'delivery_cost': validated_data.get('delivery_cost', 0),
+            'total_amount': total_amount,
+        }
         
-        # Обновляем telegram_username отдельно, если поле существует в модели
-        if telegram_username and hasattr(Order, 'telegram_username'):
+        # Создаем заказ с явно указанными полями
+        order = Order.objects.create(**order_data)
+        
+        # Пытаемся обновить telegram_username отдельно, если миграция применена
+        if telegram_username:
             try:
+                # Пробуем установить значение поля
                 order.telegram_username = telegram_username
                 order.save(update_fields=['telegram_username'])
-            except Exception:
-                # Если поле не существует, просто игнорируем
-                pass
+            except (AttributeError, Exception) as e:
+                # Если поле не существует в БД или произошла ошибка, просто игнорируем
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(f"Could not save telegram_username (field may not exist): {str(e)}")
         
         # Создаем товары в заказе
         for item_data in items_data:

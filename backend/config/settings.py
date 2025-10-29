@@ -183,7 +183,7 @@ CORS_ALLOW_METHODS = [
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "8089087655:AAH3ZobI5iV5ZTENxyLqQdyDV5nXGfAXTU0")
 # Жёстко указываем правильный username бота
 TELEGRAM_BOT_USERNAME = "cardloginbot"  # Username бота без @
-TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID", "@cardholderka")
+TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID", "-1003230450630")
 
 # CSRF exemption for API endpoints
 CSRF_TRUSTED_ORIGINS = [

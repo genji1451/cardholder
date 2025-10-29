@@ -64,30 +64,66 @@ class CreateOrderSerializer(serializers.Serializer):
         # Извлекаем telegram_username из validated_data (если миграция не применена, поле не существует)
         telegram_username = validated_data.pop('telegram_username', None)
         
-        # Создаем словарь полей для создания заказа - исключаем telegram_username явно
-        order_data = {
-            'email': validated_data.get('email'),
-            'phone': validated_data.get('phone', ''),
-            'delivery_address': validated_data.get('delivery_address', ''),
-            'delivery_method': validated_data.get('delivery_method', ''),
-            'delivery_cost': validated_data.get('delivery_cost', 0),
-            'total_amount': total_amount,
-        }
+        # Проверяем наличие поля telegram_username в БД
+        from django.db import connection
+        from django.utils import timezone
+        import uuid
         
-        # Создаем заказ с явно указанными полями
-        order = Order.objects.create(**order_data)
+        field_exists = False
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    SELECT column_name 
+                    FROM information_schema.columns 
+                    WHERE table_name='payments_order' AND column_name='telegram_username'
+                """)
+                field_exists = cursor.fetchone() is not None
+        except Exception:
+            field_exists = False
         
-        # Пытаемся обновить telegram_username отдельно, если миграция применена
-        if telegram_username:
-            try:
-                # Пробуем установить значение поля
-                order.telegram_username = telegram_username
-                order.save(update_fields=['telegram_username'])
-            except (AttributeError, Exception) as e:
-                # Если поле не существует в БД или произошла ошибка, просто игнорируем
-                import logging
-                logger = logging.getLogger(__name__)
-                logger.warning(f"Could not save telegram_username (field may not exist): {str(e)}")
+        # Создаем заказ используя прямой SQL запрос для избежания проблем с полями модели
+        order_id = uuid.uuid4()
+        now = timezone.now()
+        
+        if not field_exists:
+            # Если поле не существует в БД, используем прямой SQL без этого поля
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    INSERT INTO payments_order (
+                        id, email, phone, total_amount, status, created_at, updated_at,
+                        delivery_address, delivery_method, delivery_cost
+                    ) VALUES (
+                        %s, %s, %s, %s, 'pending', %s, %s, %s, %s, %s
+                    ) RETURNING id
+                """, [
+                    order_id,
+                    validated_data.get('email'),
+                    validated_data.get('phone', ''),
+                    total_amount,
+                    now,
+                    now,
+                    validated_data.get('delivery_address', ''),
+                    validated_data.get('delivery_method', ''),
+                    validated_data.get('delivery_cost', 0),
+                ])
+            
+            # Получаем созданный заказ
+            order = Order.objects.get(id=order_id)
+        else:
+            # Если поле существует, используем обычный create (можем включить telegram_username если есть)
+            create_kwargs = {
+                'id': order_id,
+                'email': validated_data.get('email'),
+                'phone': validated_data.get('phone', ''),
+                'delivery_address': validated_data.get('delivery_address', ''),
+                'delivery_method': validated_data.get('delivery_method', ''),
+                'delivery_cost': validated_data.get('delivery_cost', 0),
+                'total_amount': total_amount,
+            }
+            if telegram_username:
+                create_kwargs['telegram_username'] = telegram_username
+            
+            order = Order.objects.create(**create_kwargs)
         
         # Создаем товары в заказе
         for item_data in items_data:

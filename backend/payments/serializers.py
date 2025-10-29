@@ -61,11 +61,23 @@ class CreateOrderSerializer(serializers.Serializer):
         delivery_cost = validated_data.get('delivery_cost', 0)
         total_amount += float(delivery_cost)
         
+        # Проверяем наличие поля telegram_username в модели (на случай если миграция не применена)
+        telegram_username = validated_data.pop('telegram_username', None)
+        
         # Создаем заказ с вычисленной суммой
         order = Order.objects.create(
             total_amount=total_amount,
             **validated_data
         )
+        
+        # Обновляем telegram_username отдельно, если поле существует в модели
+        if telegram_username and hasattr(Order, 'telegram_username'):
+            try:
+                order.telegram_username = telegram_username
+                order.save(update_fields=['telegram_username'])
+            except Exception:
+                # Если поле не существует, просто игнорируем
+                pass
         
         # Создаем товары в заказе
         for item_data in items_data:

@@ -3,7 +3,10 @@ from django.contrib.auth.models import User
 import uuid
 import hashlib
 import hmac
+import logging
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 
 class Order(models.Model):
@@ -83,8 +86,12 @@ class Payment(models.Model):
     
     def generate_signature(self):
         """Генерация подписи для Robokassa"""
-        signature_string = f"{settings.ROBOKASSA_LOGIN}:{self.amount}:{self.order.id}:{settings.ROBOKASSA_PASSWORD1}"
-        return hashlib.md5(signature_string.encode()).hexdigest()
+        try:
+            signature_string = f"{settings.ROBOKASSA_LOGIN}:{self.amount}:{self.order.id}:{settings.ROBOKASSA_PASSWORD1}"
+            return hashlib.md5(signature_string.encode()).hexdigest()
+        except Exception as e:
+            logger.error(f"Error generating signature: {str(e)}")
+            raise
     
     def verify_signature(self, signature):
         """Проверка подписи от Robokassa"""

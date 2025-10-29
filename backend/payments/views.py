@@ -24,24 +24,32 @@ logger = logging.getLogger(__name__)
 @permission_classes([AllowAny])
 def create_order(request):
     """Создание заказа и подготовка к оплате"""
-    logger.info(f"Creating order with data: {request.data}")
-    
-    serializer = CreateOrderSerializer(data=request.data)
-    
-    if serializer.is_valid():
-        logger.info("Serializer is valid, creating order")
-        order = serializer.save()
-        logger.info(f"Order created: {order.id}")
+    try:
+        logger.info(f"Creating order with data: {request.data}")
         
-        # Создаем платеж
-        payment = Payment.objects.create(
-            order=order,
-            robokassa_invoice_id=str(order.id),
-            amount=order.total_amount
-        )
+        # Проверяем настройки Robokassa
+        if not settings.ROBOKASSA_LOGIN or not settings.ROBOKASSA_PASSWORD1:
+            logger.error("Robokassa settings not configured")
+            return Response({
+                'error': 'Payment system not configured'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        # Генерируем URL для оплаты
-        signature = payment.generate_signature()
+        serializer = CreateOrderSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            logger.info("Serializer is valid, creating order")
+            order = serializer.save()
+            logger.info(f"Order created: {order.id}")
+            
+            # Создаем платеж
+            payment = Payment.objects.create(
+                order=order,
+                robokassa_invoice_id=str(order.id),
+                amount=order.total_amount
+            )
+            
+            # Генерируем URL для оплаты
+            signature = payment.generate_signature()
         
         robokassa_url = f"https://auth.robokassa.ru/Merchant/Index.aspx"
         if settings.ROBOKASSA_TEST_MODE:
@@ -60,19 +68,26 @@ def create_order(request):
             'FailURL': settings.ROBOKASSA_FAIL_URL,
         }
         
-        logger.info(f"Payment created: {payment.id}, amount: {payment.amount}")
+            logger.info(f"Payment created: {payment.id}, amount: {payment.amount}")
+            
+            return Response({
+                'order_id': str(order.id),
+                'payment_id': payment.id,
+                'amount': payment.amount,
+                'robokassa_url': robokassa_url,
+                'payment_data': payment_data,
+                'signature': signature
+            }, status=status.HTTP_201_CREATED)
         
+        logger.error(f"Serializer validation failed: {serializer.errors}")
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    except Exception as e:
+        logger.error(f"Unexpected error in create_order: {str(e)}", exc_info=True)
         return Response({
-            'order_id': str(order.id),
-            'payment_id': payment.id,
-            'amount': payment.amount,
-            'robokassa_url': robokassa_url,
-            'payment_data': payment_data,
-            'signature': signature
-        }, status=status.HTTP_201_CREATED)
-    
-    logger.error(f"Serializer validation failed: {serializer.errors}")
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            'error': 'Internal server error',
+            'details': str(e) if settings.DEBUG else 'Contact support'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @csrf_exempt

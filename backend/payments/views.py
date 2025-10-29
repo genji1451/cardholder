@@ -199,21 +199,58 @@ def payment_status(request, order_id):
         return Response({'error': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
+@csrf_exempt
 def payment_success(request):
-    """Страница успешной оплаты"""
-    order_id = request.GET.get('InvId')
-    context = {
-        'order_id': order_id,
-        'success': True
-    }
-    return render(request, 'payments/success.html', context)
+    """Страница успешной оплаты - редирект на фронтенд"""
+    # Получаем InvId из GET или POST (Robokassa может отправлять POST)
+    order_id = request.GET.get('InvId') or request.POST.get('InvId')
+    
+    # Если InvId есть, ищем payment и обновляем статус
+    if order_id:
+        try:
+            payment = Payment.objects.get(robokassa_invoice_id=order_id)
+            if payment.status == 'pending':
+                payment.status = 'success'
+                payment.paid_at = timezone.now()
+                payment.save()
+                
+                order = payment.order
+                if order.status == 'pending':
+                    order.status = 'paid'
+                    order.save()
+                
+                logger.info(f"Payment marked as success: {order_id}")
+        except Payment.DoesNotExist:
+            logger.warning(f"Payment not found for InvId: {order_id}")
+    
+    # Редиректим на фронтенд с параметром InvId
+    frontend_url = 'https://portfolio.cards/payment/success/'
+    if order_id:
+        frontend_url += f'?InvId={order_id}'
+    
+    return redirect(frontend_url)
 
 
+@csrf_exempt
 def payment_fail(request):
-    """Страница неуспешной оплаты"""
-    order_id = request.GET.get('InvId')
-    context = {
-        'order_id': order_id,
-        'success': False
-    }
-    return render(request, 'payments/fail.html', context)
+    """Страница неуспешной оплаты - редирект на фронтенд"""
+    # Получаем InvId из GET или POST
+    order_id = request.GET.get('InvId') or request.POST.get('InvId')
+    
+    # Если InvId есть, обновляем статус платежа
+    if order_id:
+        try:
+            payment = Payment.objects.get(robokassa_invoice_id=order_id)
+            if payment.status == 'pending':
+                payment.status = 'failed'
+                payment.save()
+                logger.info(f"Payment marked as failed: {order_id}")
+        except Payment.DoesNotExist:
+            logger.warning(f"Payment not found for InvId: {order_id}")
+    
+    # Редиректим на фронтенд с параметром InvId
+    frontend_url = 'https://portfolio.cards/payment/fail/'
+    if order_id:
+        frontend_url += f'?InvId={order_id}'
+    
+    return redirect(frontend_url)

@@ -178,29 +178,6 @@ CORS_ALLOW_METHODS = [
     'PUT',
 ]
 
-# CORS Headers
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-]
-
-# CORS Methods
-CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
-]
-
 # Telegram Bot Settings
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "8089087655:AAH3ZobI5iV5ZTENxyLqQdyDV5nXGfAXTU0")
 # Жёстко указываем правильный username бота
@@ -266,9 +243,8 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     
-    # CORS settings for production
-    CORS_ALLOW_ALL_ORIGINS = False  # Be more restrictive in production
-    # CORS_ALLOWED_ORIGINS уже содержит нужные домены
+    # CORS settings for production - НЕ перезаписываем, оставляем True для работы
+    # CORS_ALLOW_ALL_ORIGINS уже установлен в True выше
 
 # Robokassa Payment Settings
 ROBOKASSA_LOGIN = os.getenv('ROBOKASSA_LOGIN', 'cgcshop')

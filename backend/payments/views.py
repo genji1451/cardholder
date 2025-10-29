@@ -24,9 +24,13 @@ logger = logging.getLogger(__name__)
 @permission_classes([AllowAny])
 def create_order(request):
     """Создание заказа и подготовка к оплате"""
-    # Обработка OPTIONS запроса для CORS
+    # Обработка OPTIONS запроса для CORS preflight
     if request.method == 'OPTIONS':
-        return Response(status=status.HTTP_200_OK)
+        response = Response(status=status.HTTP_200_OK)
+        response['Access-Control-Allow-Origin'] = '*'
+        response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        return response
     
     try:
         logger.info(f"Creating order with data: {request.data}")
@@ -74,7 +78,7 @@ def create_order(request):
         
             logger.info(f"Payment created: {payment.id}, amount: {payment.amount}")
             
-            return Response({
+            response = Response({
                 'order_id': str(order.id),
                 'payment_id': payment.id,
                 'amount': payment.amount,
@@ -82,16 +86,27 @@ def create_order(request):
                 'payment_data': payment_data,
                 'signature': signature
             }, status=status.HTTP_201_CREATED)
+            
+            # Добавляем CORS заголовки в ответ
+            response['Access-Control-Allow-Origin'] = '*'
+            response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+            response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+            
+            return response
         
         logger.error(f"Serializer validation failed: {serializer.errors}")
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        response = Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        response['Access-Control-Allow-Origin'] = '*'
+        return response
         
     except Exception as e:
         logger.error(f"Unexpected error in create_order: {str(e)}", exc_info=True)
-        return Response({
+        response = Response({
             'error': 'Internal server error',
             'details': str(e) if settings.DEBUG else 'Contact support'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        response['Access-Control-Allow-Origin'] = '*'
+        return response
 
 
 @csrf_exempt

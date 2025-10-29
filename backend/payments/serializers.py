@@ -47,8 +47,24 @@ class CreateOrderSerializer(serializers.Serializer):
     
     def create(self, validated_data):
         items_data = validated_data.pop('items')
-        order = Order.objects.create(**validated_data)
         
+        # Вычисляем общую сумму заказа
+        total_amount = sum(
+            float(item['price']) * item['quantity'] 
+            for item in items_data
+        )
+        
+        # Добавляем стоимость доставки
+        delivery_cost = validated_data.get('delivery_cost', 0)
+        total_amount += float(delivery_cost)
+        
+        # Создаем заказ с вычисленной суммой
+        order = Order.objects.create(
+            total_amount=total_amount,
+            **validated_data
+        )
+        
+        # Создаем товары в заказе
         for item_data in items_data:
             OrderItem.objects.create(order=order, **item_data)
         

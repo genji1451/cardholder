@@ -24,10 +24,14 @@ logger = logging.getLogger(__name__)
 @permission_classes([AllowAny])
 def create_order(request):
     """Создание заказа и подготовка к оплате"""
+    logger.info(f"Creating order with data: {request.data}")
+    
     serializer = CreateOrderSerializer(data=request.data)
     
     if serializer.is_valid():
+        logger.info("Serializer is valid, creating order")
         order = serializer.save()
+        logger.info(f"Order created: {order.id}")
         
         # Создаем платеж
         payment = Payment.objects.create(
@@ -56,6 +60,8 @@ def create_order(request):
             'FailURL': settings.ROBOKASSA_FAIL_URL,
         }
         
+        logger.info(f"Payment created: {payment.id}, amount: {payment.amount}")
+        
         return Response({
             'order_id': str(order.id),
             'payment_id': payment.id,
@@ -65,6 +71,7 @@ def create_order(request):
             'signature': signature
         }, status=status.HTTP_201_CREATED)
     
+    logger.error(f"Serializer validation failed: {serializer.errors}")
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

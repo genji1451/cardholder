@@ -264,16 +264,13 @@ if not DEBUG:
     
     # CORS settings for production
     CORS_ALLOW_ALL_ORIGINS = False  # Be more restrictive in production
-    CORS_ALLOWED_ORIGINS.extend([
-        'https://cardholder.onrender.com',
-        'https://*.vercel.app',  # Allow Vercel deployments
-    ])
+    # CORS_ALLOWED_ORIGINS уже содержит нужные домены
 
 # Robokassa Payment Settings
-ROBOKASSA_LOGIN = 'cgcshop'
-ROBOKASSA_PASSWORD1 = '1Bs83IDGaf4nM66NMnhXL'
-ROBOKASSA_PASSWORD2 = 'kJYON1X7n1yZ1nZV2ihZ'
-ROBOKASSA_TEST_MODE = True
+ROBOKASSA_LOGIN = os.getenv('ROBOKASSA_LOGIN', 'cgcshop')
+ROBOKASSA_PASSWORD1 = os.getenv('ROBOKASSA_PASSWORD1', '1Bs83IDGaf4nM66NMnhXL')
+ROBOKASSA_PASSWORD2 = os.getenv('ROBOKASSA_PASSWORD2', 'kJYON1X7n1yZ1nZV2ihZ')
+ROBOKASSA_TEST_MODE = os.getenv('ROBOKASSA_TEST_MODE', 'True').lower() == 'true'
 
 # Payment URLs
 ROBOKASSA_SUCCESS_URL = 'https://portfolio.cards/payment/success/'

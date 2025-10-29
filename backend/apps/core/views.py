@@ -263,67 +263,7 @@ def check_telegram_subscription(request):
 @permission_classes([AllowAny])
 def api_root(request):
     """API root endpoint"""
-    # Try to initialize database if needed
-    try:
-        from apps.cards.models import Card, Series
-        from decimal import Decimal
-        from django.core.management import execute_from_command_line
-        import sys
-        
-        # Try to run migrations first
-        try:
-            execute_from_command_line(['manage.py', 'migrate', '--run-syncdb'])
-        except Exception:
-            pass  # Ignore migration errors
-        
-        # Try to create data if database is accessible
-        try:
-            if Card.objects.count() == 0:
-                # Create series if not exists
-                series, created = Series.objects.get_or_create(
-                    number=1,
-                    defaults={
-                        'title': 'Spider-Man Collection'
-                    }
-                )
-                
-                # Create simple sample cards
-                Card.objects.get_or_create(
-                    number=1,
-                    series=series,
-                    defaults={
-                        'title': 'Человек-Паук',
-                        'rarity': 'o',
-                        'base_price_rub': Decimal('52.50'),
-                        'notes': 'Основной герой комиксов Marvel'
-                    }
-                )
-                
-                Card.objects.get_or_create(
-                    number=2,
-                    series=series,
-                    defaults={
-                        'title': 'Железный Человек',
-                        'rarity': 'o',
-                        'base_price_rub': Decimal('55.00'),
-                        'notes': 'Гений, миллиардер, филантроп'
-                    }
-                )
-                
-                Card.objects.get_or_create(
-                    number=3,
-                    series=series,
-                    defaults={
-                        'title': 'Веном',
-                        'rarity': 'ск',
-                        'base_price_rub': Decimal('92.50'),
-                        'notes': 'Симбиот и бывший хост Эдди Брок'
-                    }
-                )
-        except Exception:
-            pass  # Database not ready yet
-    except Exception:
-        pass  # Ignore all initialization errors
+    # Simplified API root - no database initialization
     
     return Response({
         'message': 'Spider-Man Cards Collection API',
@@ -337,6 +277,7 @@ def api_root(request):
             'inventory': '/api/inventory/',
             'wishlist': '/api/wishlist/',
             'analytics': '/api/analytics/',
+            'payment': '/api/payment/',
         }
     })
 

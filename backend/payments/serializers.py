@@ -107,8 +107,31 @@ class CreateOrderSerializer(serializers.Serializer):
                     validated_data.get('delivery_cost', 0),
                 ])
             
-            # Получаем созданный заказ
-            order = Order.objects.get(id=order_id)
+            # Получаем созданный заказ через прямой SQL (чтобы избежать проблем с несуществующими полями)
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    SELECT id, email, phone, total_amount, status, created_at, updated_at,
+                           delivery_address, delivery_method, delivery_cost
+                    FROM payments_order
+                    WHERE id = %s
+                """, [order_id])
+                row = cursor.fetchone()
+            
+            # Создаем объект Order вручную с полученными данными
+            order = Order(
+                id=row[0],
+                email=row[1],
+                phone=row[2] or '',
+                total_amount=row[3],
+                status=row[4],
+                created_at=row[5],
+                updated_at=row[6],
+                delivery_address=row[7] or '',
+                delivery_method=row[8] or '',
+                delivery_cost=row[9] or 0,
+            )
+            order._state.adding = False
+            order._state.db = 'default'
         else:
             # Если поле существует, используем обычный create (можем включить telegram_username если есть)
             create_kwargs = {

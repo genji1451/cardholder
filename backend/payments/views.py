@@ -1,6 +1,7 @@
 import hashlib
 import hmac
 import logging
+import asyncio
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -15,9 +16,77 @@ from rest_framework.response import Response
 from .models import Order, Payment
 from .serializers import CreateOrderSerializer, PaymentSerializer
 import json
-import logging
 
 logger = logging.getLogger(__name__)
+
+
+async def send_order_notification(order, items_data, telegram_username=None):
+    """Отправка уведомления о новом заказе в Telegram"""
+    try:
+        from telegram import Bot
+        
+        bot_token = settings.TELEGRAM_BOT_TOKEN
+        channel_id = settings.TELEGRAM_CHANNEL_ID
+        
+        if not bot_token:
+            logger.warning("TELEGRAM_BOT_TOKEN не настроен, пропускаем отправку уведомления")
+            return
+        
+        bot = Bot(token=bot_token)
+        
+        # Формируем сообщение о заказе
+        items_text = "\n".join([
+            f"  • {item.get('product_title', 'Товар')} x{item.get('quantity', 1)} - {item.get('price', 0) * item.get('quantity', 1)}₽"
+            for item in items_data
+        ])
+        
+        message = f"""🛍️ <b>Новый заказ #{order.id}</b>
+
+👤 <b>Покупатель:</b>
+  Email: {order.email}
+  Телефон: {order.phone if order.phone else 'Не указан'}
+  {"  Telegram: @" + telegram_username if telegram_username else ""}
+
+📦 <b>Товары:</b>
+{items_text}
+
+💰 <b>Сумма:</b>
+  Товары: {order.total_amount - order.delivery_cost}₽
+  Доставка: {"Бесплатно" if order.delivery_cost == 0 else str(order.delivery_cost) + "₽"}
+  <b>Итого: {order.total_amount}₽</b>
+
+🚚 <b>Доставка:</b>
+  Способ: {order.delivery_method if order.delivery_method else 'Не указан'}
+  Адрес: {order.delivery_address if order.delivery_address else 'Не указан'}
+"""
+        
+        # Отправляем в канал (если настроен) или логируем
+        if channel_id:
+            try:
+                # Убираем @ если есть
+                chat_id = channel_id.lstrip('@')
+                await bot.send_message(
+                    chat_id=chat_id,
+                    text=message,
+                    parse_mode='HTML'
+                )
+                logger.info(f"Order notification sent to Telegram channel: {channel_id}")
+            except Exception as e:
+                logger.error(f"Failed to send order notification to Telegram: {str(e)}")
+        else:
+            # Если канал не настроен, просто логируем
+            logger.info(f"New order notification:\n{message}")
+            
+    except Exception as e:
+        logger.error(f"Error sending order notification: {str(e)}", exc_info=True)
+
+
+def send_order_notification_sync(order, items_data, telegram_username=None):
+    """Синхронная обертка для отправки уведомления"""
+    try:
+        asyncio.run(send_order_notification(order, items_data, telegram_username))
+    except Exception as e:
+        logger.error(f"Error in send_order_notification_sync: {str(e)}")
 
 
 @api_view(['POST', 'OPTIONS'])
@@ -49,9 +118,17 @@ def create_order(request):
             
             # Сохраняем данные товаров из запроса для формирования описания
             items_data = request.data.get('items', [])
+            telegram_username = request.data.get('telegram_username', '')
             
             order = serializer.save()
             logger.info(f"Order created: {order.id}")
+            
+            # Отправляем уведомление о новом заказе в Telegram (асинхронно, не блокируем ответ)
+            try:
+                send_order_notification_sync(order, items_data, telegram_username)
+            except Exception as e:
+                logger.error(f"Failed to send order notification: {str(e)}")
+                # Не прерываем создание заказа из-за ошибки уведомления
             
             # Форматируем сумму для Robokassa (формат: "450.00" или "450")
             amount_str = f"{float(order.total_amount):.2f}".rstrip('0').rstrip('.')

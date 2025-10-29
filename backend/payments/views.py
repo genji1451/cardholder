@@ -141,17 +141,19 @@ def robokassa_result(request):
         
         logger.info(f"Robokassa result: OutSum={out_sum}, InvId={inv_id}, Signature={signature}")
         
-        # Находим заказ и платеж
+        # Находим платеж по robokassa_invoice_id (InvId теперь = payment.id)
         try:
-            order = Order.objects.get(id=inv_id)
-            payment = Payment.objects.get(order=order)
-        except (Order.DoesNotExist, Payment.DoesNotExist):
-            logger.error(f"Order or Payment not found for InvId: {inv_id}")
+            payment = Payment.objects.get(robokassa_invoice_id=inv_id)
+            order = payment.order
+        except Payment.DoesNotExist:
+            logger.error(f"Payment not found for InvId: {inv_id}")
             return HttpResponse("ERROR")
         
-        # Проверяем сумму
-        if float(out_sum) != float(payment.amount):
-            logger.error(f"Amount mismatch: expected {payment.amount}, got {out_sum}")
+        # Проверяем сумму (сравниваем как числа, учитывая возможные различия в форматировании)
+        expected_amount = float(payment.amount)
+        received_amount = float(out_sum)
+        if abs(expected_amount - received_amount) > 0.01:  # Разрешаем небольшую погрешность
+            logger.error(f"Amount mismatch: expected {expected_amount}, got {received_amount}")
             return HttpResponse("ERROR")
         
         # Проверяем подпись

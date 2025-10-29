@@ -3,6 +3,8 @@ from .models import Order, OrderItem, Payment
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
+    # Разрешаем относительные/произвольные строки для изображения, без строгой URL-валидации
+    product_image = serializers.CharField(required=False, allow_blank=True)
     class Meta:
         model = OrderItem
         fields = [

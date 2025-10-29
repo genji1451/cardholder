@@ -63,6 +63,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     # CORS должен быть как можно выше
     'corsheaders.middleware.CorsMiddleware',
+    'config.cors_middleware.CorsMiddleware',  # Кастомный CORS для обработки ошибок
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

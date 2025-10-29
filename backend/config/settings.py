@@ -268,9 +268,9 @@ if not DEBUG:
 
 # Robokassa Payment Settings
 ROBOKASSA_LOGIN = os.getenv('ROBOKASSA_LOGIN', 'cgcshop')
-ROBOKASSA_PASSWORD1 = os.getenv('ROBOKASSA_PASSWORD1', '1Bs83IDGaf4nM66NMnhXL')
-ROBOKASSA_PASSWORD2 = os.getenv('ROBOKASSA_PASSWORD2', 'kJYON1X7n1yZ1nZV2ihZ')
-ROBOKASSA_TEST_MODE = os.getenv('ROBOKASSA_TEST_MODE', 'True').lower() == 'true'
+ROBOKASSA_PASSWORD1 = os.getenv('ROBOKASSA_PASSWORD1', 'BDh7bCgOO2x4c2rPPUr6')
+ROBOKASSA_PASSWORD2 = os.getenv('ROBOKASSA_PASSWORD2', 'acm1aB1nk9oo8s7CYOOe')
+ROBOKASSA_TEST_MODE = os.getenv('ROBOKASSA_TEST_MODE', 'False').lower() == 'true'
 
 # Payment URLs
 ROBOKASSA_SUCCESS_URL = 'https://portfolio.cards/payment/success/'

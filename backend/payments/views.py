@@ -46,6 +46,10 @@ def create_order(request):
         
         if serializer.is_valid():
             logger.info("Serializer is valid, creating order")
+            
+            # Сохраняем данные товаров из запроса для формирования описания
+            items_data = request.data.get('items', [])
+            
             order = serializer.save()
             logger.info(f"Order created: {order.id}")
             
@@ -78,41 +82,59 @@ def create_order(request):
             
             # Формируем описание заказа с товарами, контактами и адресом
             # Robokassa ограничивает Description до 100 символов, делаем компактно
-            items_list = []
-            for item in order.items.all():
-                items_list.append(f"{item.product_title} x{item.quantity}")
-            
-            # Собираем информацию для описания
-            description_parts = []
-            
-            # Товары (первые 30 символов)
-            items_str = ", ".join(items_list)[:30]
-            if items_str:
-                description_parts.append(f"Товары: {items_str}")
-            
-            # Email (первые 20 символов)
-            if order.email:
-                email_str = order.email[:20]
-                description_parts.append(f"Email: {email_str}")
-            
-            # Адрес доставки (первые 20 символов)
-            if order.delivery_address:
-                address_str = order.delivery_address[:20]
-                description_parts.append(f"Адрес: {address_str}")
-            
-            # Ник в телеграм (если указан)
-            if order.telegram_username:
-                telegram_str = order.telegram_username[:15]
-                description_parts.append(f"TG: {telegram_str}")
-            
-            # Если ничего не добавилось, используем ID заказа
-            if not description_parts:
+            # Используем данные из запроса, так как товары уже созданы в сериализаторе
+            try:
+                items_list = []
+                # Пробуем получить товары из БД (они должны быть созданы)
+                order_items = order.items.all()
+                if order_items.exists():
+                    for item in order_items:
+                        items_list.append(f"{item.product_title} x{item.quantity}")
+                else:
+                    # Если товары еще не сохранены, используем сохраненные данные из запроса
+                    for item_data in items_data:
+                        title = item_data.get('product_title', 'Товар')
+                        quantity = item_data.get('quantity', 1)
+                        items_list.append(f"{title} x{quantity}")
+                
+                # Собираем информацию для описания
+                description_parts = []
+                
+                # Товары (первые 30 символов)
+                if items_list:
+                    items_str = ", ".join(items_list)[:30]
+                    if items_str:
+                        description_parts.append(f"Товары: {items_str}")
+                
+                # Email (первые 20 символов)
+                if order.email:
+                    email_str = order.email[:20]
+                    description_parts.append(f"Email: {email_str}")
+                
+                # Адрес доставки (первые 20 символов)
+                if order.delivery_address:
+                    address_str = order.delivery_address[:20]
+                    description_parts.append(f"Адрес: {address_str}")
+                
+                # Ник в телеграм (если указан)
+                telegram_username = getattr(order, 'telegram_username', None)
+                if telegram_username:
+                    telegram_str = telegram_username[:15]
+                    description_parts.append(f"TG: {telegram_str}")
+                
+                # Если ничего не добавилось, используем ID заказа
+                if not description_parts:
+                    description = f"Заказ {str(order.id)[:50]}"
+                else:
+                    description = " | ".join(description_parts)
+                    # Ограничиваем до 100 символов (лимит Robokassa)
+                    if len(description) > 100:
+                        description = description[:97] + "..."
+                        
+            except Exception as e:
+                logger.error(f"Error creating description: {str(e)}")
+                # Fallback: простое описание
                 description = f"Заказ {str(order.id)[:50]}"
-            else:
-                description = " | ".join(description_parts)
-                # Ограничиваем до 100 символов (лимит Robokassa)
-                if len(description) > 100:
-                    description = description[:97] + "..."
             
             payment_data = {
                 'MerchantLogin': settings.ROBOKASSA_LOGIN,

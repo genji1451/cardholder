@@ -75,7 +75,7 @@ const mockProducts: Product[] = [
     stock: 0,
     totalStock: 1,
     image: '/images/spiderman/004.png',
-    available: true,
+    available: false,
   },
   {
     id: 5,

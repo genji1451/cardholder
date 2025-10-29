@@ -49,32 +49,52 @@ def create_order(request):
             order = serializer.save()
             logger.info(f"Order created: {order.id}")
             
+            # Форматируем сумму для Robokassa (формат: "450.00" или "450")
+            amount_str = f"{float(order.total_amount):.2f}".rstrip('0').rstrip('.')
+            if not amount_str:
+                amount_str = "0"
+            
             # Создаем платеж
             payment = Payment.objects.create(
                 order=order,
-                robokassa_invoice_id=str(order.id),
+                robokassa_invoice_id=str(order.id),  # Временно используем order.id
                 amount=order.total_amount
             )
             
-            # Генерируем URL для оплаты
-            signature = payment.generate_signature()
+            # Используем payment.id как InvId (числовой ID для совместимости с Robokassa)
+            inv_id = str(payment.id)
             
-            robokassa_url = f"https://auth.robokassa.ru/Merchant/Index.aspx"
-            if settings.ROBOKASSA_TEST_MODE:
-                robokassa_url = f"https://auth.robokassa.ru/Merchant/Index.aspx"
+            # Обновляем robokassa_invoice_id
+            payment.robokassa_invoice_id = inv_id
+            payment.save()
+            
+            # Генерируем подпись с правильными параметрами для Robokassa
+            signature_string = f"{settings.ROBOKASSA_LOGIN}:{amount_str}:{inv_id}:{settings.ROBOKASSA_PASSWORD1}"
+            signature = hashlib.md5(signature_string.encode()).hexdigest()
+            
+            logger.info(f"Robokassa signature: {signature_string} -> {signature}")
+            
+            robokassa_url = "https://auth.robokassa.ru/Merchant/Index.aspx"
             
             payment_data = {
                 'MerchantLogin': settings.ROBOKASSA_LOGIN,
-                'OutSum': str(payment.amount),
-                'InvId': str(order.id),
-                'Description': f"Заказ #{order.id}",
+                'OutSum': amount_str,
+                'InvId': inv_id,
+                'Description': f"Заказ {str(order.id)[:50]}",  # Ограничиваем длину описания
                 'SignatureValue': signature,
                 'Culture': 'ru',
                 'Encoding': 'utf-8',
-                'IsTest': 1 if settings.ROBOKASSA_TEST_MODE else 0,
-                'SuccessURL': settings.ROBOKASSA_SUCCESS_URL,
-                'FailURL': settings.ROBOKASSA_FAIL_URL,
             }
+            
+            # Добавляем IsTest только если тестовый режим включен
+            if settings.ROBOKASSA_TEST_MODE:
+                payment_data['IsTest'] = '1'
+            
+            # Добавляем URL только если они настроены
+            if hasattr(settings, 'ROBOKASSA_SUCCESS_URL') and settings.ROBOKASSA_SUCCESS_URL:
+                payment_data['SuccessURL'] = settings.ROBOKASSA_SUCCESS_URL
+            if hasattr(settings, 'ROBOKASSA_FAIL_URL') and settings.ROBOKASSA_FAIL_URL:
+                payment_data['FailURL'] = settings.ROBOKASSA_FAIL_URL
             
             logger.info(f"Payment created: {payment.id}, amount: {payment.amount}")
             

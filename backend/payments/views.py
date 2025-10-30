@@ -237,9 +237,16 @@ def create_order(request):
                 'Encoding': 'utf-8',
             }
             
+            logger.info(f"Payment data prepared: MerchantLogin={settings.ROBOKASSA_LOGIN}, OutSum={amount_str}, InvId={inv_id}, Description='{description}'")
+            
             # Добавляем IsTest только если тестовый режим включен
             if settings.ROBOKASSA_TEST_MODE:
                 payment_data['IsTest'] = '1'
+                logger.info("TEST MODE is enabled")
+            else:
+                logger.info("PRODUCTION MODE is enabled")
+            
+            logger.info(f"Full payment_data: {payment_data}")
             
             # Добавляем URL только если они настроены
             if hasattr(settings, 'ROBOKASSA_SUCCESS_URL') and settings.ROBOKASSA_SUCCESS_URL:

@@ -287,9 +287,9 @@ const ShopPage = () => {
     <div className="shop-page">
       {/* Simple Navigation */}
       <nav className="shop-nav">
-        <Link to="/" className="shop-nav-logo">
+        <a href="https://portfolio.cards/shop" className="shop-nav-logo">
           🕷️ Portfolio Cards
-        </Link>
+        </a>
         <div className="shop-nav-links">
           <Link to="/cart" className="shop-nav-link cart-link">
             🛒 Корзина
@@ -297,8 +297,7 @@ const ShopPage = () => {
               <span className="cart-badge">{getTotalItems()}</span>
             )}
           </Link>
-          <Link to="/" className="shop-nav-link">🏠 Главная</Link>
-          <Link to="/auth" className="shop-nav-link">🚀 Войти</Link>
+          <a href="https://portfolio.cards/shop" className="shop-nav-link">🏠 Главная</a>
         </div>
       </nav>
 

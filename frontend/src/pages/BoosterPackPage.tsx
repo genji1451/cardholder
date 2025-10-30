@@ -16,8 +16,10 @@ const BoosterPackPage = ({}: BoosterPackPageProps) => {
   const [cardStack, setCardStack] = useState<Card[]>([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [showCard, setShowCard] = useState(false);
+  const [rotation, setRotation] = useState({ x: 0, y: 0 });
   
   const packRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   // Генерируем случайные карты
   const generateCards = (): Card[] => {
@@ -78,6 +80,27 @@ const BoosterPackPage = ({}: BoosterPackPageProps) => {
     setCardStack([]);
     setCurrentCardIndex(0);
     setShowCard(false);
+    setRotation({ x: 0, y: 0 });
+  };
+
+  const handleCardMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current || !showCard) return;
+
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = ((y - centerY) / centerY) * 20; // Максимальный наклон 20 градусов
+    const rotateY = ((centerX - x) / centerX) * 20;
+
+    setRotation({ x: rotateX, y: rotateY });
+  };
+
+  const handleCardMouseLeave = () => {
+    setRotation({ x: 0, y: 0 });
   };
 
   const currentCard = cardStack[currentCardIndex];
@@ -118,15 +141,25 @@ const BoosterPackPage = ({}: BoosterPackPageProps) => {
       ) : (
         <div className="cards-section">
           {showCard && currentCard && (
-            <div 
-              className={`card-container ${showCard ? 'show' : ''}`}
-              onClick={() => handleSwipe('left')}
-            >
-              <div className="card-flip">
-                <div className="card-front-face">
-                  <img src={currentCard.image} alt={currentCard.title} />
+            <div className="card-3d-wrapper">
+              <div 
+                ref={cardRef}
+                className={`card-container ${showCard ? 'show' : ''}`}
+                onMouseMove={handleCardMouseMove}
+                onMouseLeave={handleCardMouseLeave}
+                onClick={() => handleSwipe('left')}
+                style={{
+                  transform: `perspective(1500px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale3d(1, 1, 1)`,
+                }}
+              >
+                <div className="card-flip">
+                  <div className="card-front-face">
+                    <img src={currentCard.image} alt={currentCard.title} />
+                  </div>
                 </div>
               </div>
+              
+              <div className="card-shadow"></div>
               
               <div className="card-info">
                 <div className={`rarity-badge ${currentCard.rarity}`}>
@@ -143,12 +176,15 @@ const BoosterPackPage = ({}: BoosterPackPageProps) => {
           )}
           
           {!showCard && currentCard && (
-            <div className="card-container">
-              <div className="card-flip">
-                <div className="card-front-face">
-                  <img src={currentCard.image} alt={currentCard.title} />
+            <div className="card-3d-wrapper">
+              <div className="card-container">
+                <div className="card-flip">
+                  <div className="card-front-face">
+                    <img src={currentCard.image} alt={currentCard.title} />
+                  </div>
                 </div>
               </div>
+              <div className="card-shadow"></div>
             </div>
           )}
           

@@ -86,3 +86,9 @@ ngrok.pid
 # Temporary files
 *.tmp
 *.temp
+
+# Test pages (local only, not deployed)
+frontend/src/pages/Card3DTestPage.tsx
+frontend/src/pages/Card3DTestPage.css
+frontend/src/pages/BoosterPackPage.tsx
+frontend/src/pages/BoosterPackPage.css

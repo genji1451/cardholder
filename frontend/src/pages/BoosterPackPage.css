@@ -84,36 +84,44 @@
   opacity: 0.9;
 }
 
-/* Эффект разрезания */
+/* Эффект разрезания - золотая линия */
 .cutting-line {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, #ffd700, transparent);
-  animation: cutAnimation 2s ease-in-out;
-  z-index: 10;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  height: 4px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 215, 0, 0.5) 10%,
+    #ffd700 50%,
+    rgba(255, 215, 0, 0.5) 90%,
+    transparent 100%
+  );
+  animation: cutAnimation 0.5s cubic-bezier(0.4, 0, 1, 1) forwards;
+  z-index: 12;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 1);
+  opacity: 0;
 }
 
 @keyframes cutAnimation {
   0% {
-    top: 50%;
-    opacity: 1;
+    top: 100%;
+    opacity: 0;
     transform: scaleX(0);
   }
-  50% {
-    top: 0%;
-    transform: scaleX(1);
+  30% {
+    opacity: 1;
   }
   100% {
-    top: -20px;
-    opacity: 0;
+    top: 0%;
+    opacity: 1;
+    transform: scaleX(1);
   }
 }
 
-.pack-top-part {
+/* Статическая верхняя часть */
+.pack-top-part-static {
   position: absolute;
   top: 0;
   left: 0;
@@ -121,17 +129,120 @@
   height: 50%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 20px 20px 0 0;
-  animation: openTop 2s ease-in-out forwards;
-  z-index: 5;
+  z-index: 6;
+  overflow: hidden;
+  transform-origin: bottom center;
 }
 
-@keyframes openTop {
+.top-part-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  transform: scaleY(1);
+  transform-origin: bottom center;
+}
+
+.top-part-content .pack-label {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+.top-part-content .pack-subtitle {
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+}
+
+/* Поворачивающаяся верхняя часть */
+.pack-top-part-flipped {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px 20px 0 0;
+  z-index: 11;
+  overflow: hidden;
+  transform-origin: bottom center;
+  animation: flipTop 0.8s cubic-bezier(0.6, 0, 0.4, 1) forwards;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes flipTop {
   0% {
-    transform: translateY(0) rotateX(0deg);
+    transform: translateY(0) rotateX(0deg) scaleY(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-30px) rotateX(-90deg) scaleY(1);
+    opacity: 1;
   }
   100% {
-    transform: translateY(-100%) rotateX(-90deg);
+    transform: translateY(-150px) rotateX(-180deg) scaleY(1);
     opacity: 0;
+  }
+}
+
+.pack-top-part-flipped .top-part-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  animation: flipContent 0.8s cubic-bezier(0.6, 0, 0.4, 1) forwards;
+}
+
+@keyframes flipContent {
+  0% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleY(0.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+}
+
+/* Состояния открытия */
+.booster-pack.opening {
+  cursor: default;
+  animation: packShake 0.3s ease-in-out;
+}
+
+@keyframes packShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px) rotate(-1deg); }
+  75% { transform: translateX(3px) rotate(1deg); }
+}
+
+.booster-pack.cutting {
+  animation: packShake 0.5s ease-in-out;
+}
+
+.booster-pack.top-flipped .pack-wrap {
+  animation: revealContent 0.4s ease-out 0.4s both;
+}
+
+@keyframes revealContent {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

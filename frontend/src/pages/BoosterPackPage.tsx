@@ -13,6 +13,8 @@ interface Card {
 const BoosterPackPage = ({}: BoosterPackPageProps) => {
   const [isOpening, setIsOpening] = useState(false);
   const [isOpened, setIsOpened] = useState(false);
+  const [isCutting, setIsCutting] = useState(false);
+  const [topFlipped, setTopFlipped] = useState(false);
   const [cardStack, setCardStack] = useState<Card[]>([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [showCard, setShowCard] = useState(false);
@@ -20,6 +22,7 @@ const BoosterPackPage = ({}: BoosterPackPageProps) => {
   
   const packRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const topPartRef = useRef<HTMLDivElement>(null);
 
   // Генерируем случайные карты
   const generateCards = (): Card[] => {
@@ -55,12 +58,24 @@ const BoosterPackPage = ({}: BoosterPackPageProps) => {
     const cards = generateCards();
     setCardStack(cards);
     
-    // Анимация разрезания упаковки
+    // Этап 1: Разрез (0.5 сек)
+    setTimeout(() => {
+      setIsCutting(true);
+    }, 300);
+    
+    // Этап 2: Поворот верхней части (0.8 сек)
+    setTimeout(() => {
+      setTopFlipped(true);
+    }, 800);
+    
+    // Этап 3: Удаление верхней части и показ карт (1.6 сек)
     setTimeout(() => {
       setIsOpening(false);
+      setIsCutting(false);
+      setTopFlipped(false);
       setIsOpened(true);
       setShowCard(true);
-    }, 2000);
+    }, 1600);
   };
 
   const handleSwipe = (direction: 'left' | 'right') => {
@@ -77,6 +92,8 @@ const BoosterPackPage = ({}: BoosterPackPageProps) => {
   const handleReset = () => {
     setIsOpening(false);
     setIsOpened(false);
+    setIsCutting(false);
+    setTopFlipped(false);
     setCardStack([]);
     setCurrentCardIndex(0);
     setShowCard(false);
@@ -116,7 +133,7 @@ const BoosterPackPage = ({}: BoosterPackPageProps) => {
         <div className="pack-section">
           <div 
             ref={packRef}
-            className={`booster-pack ${isOpening ? 'opening' : ''}`}
+            className={`booster-pack ${isOpening ? 'opening' : ''} ${isCutting ? 'cutting' : ''} ${topFlipped ? 'top-flipped' : ''}`}
             onClick={handleOpenPack}
           >
             <div className="pack-wrap">
@@ -124,11 +141,29 @@ const BoosterPackPage = ({}: BoosterPackPageProps) => {
               <div className="pack-subtitle">BOOSTER PACK</div>
             </div>
             
-            {isOpening && (
-              <>
-                <div className="cutting-line"></div>
-                <div className="pack-top-part"></div>
-              </>
+            {isCutting && (
+              <div className="cutting-line"></div>
+            )}
+            
+            {topFlipped && (
+              <div 
+                ref={topPartRef}
+                className="pack-top-part-flipped"
+              >
+                <div className="top-part-content">
+                  <div className="pack-label">🕸️ SPIDER-MAN</div>
+                  <div className="pack-subtitle">BOOSTER PACK</div>
+                </div>
+              </div>
+            )}
+            
+            {isOpening && !topFlipped && (
+              <div className="pack-top-part-static">
+                <div className="top-part-content">
+                  <div className="pack-label">🕸️ SPIDER-MAN</div>
+                  <div className="pack-subtitle">BOOSTER PACK</div>
+                </div>
+              </div>
             )}
           </div>
           

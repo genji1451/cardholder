@@ -28,8 +28,14 @@ async def send_order_notification(order, items_data, telegram_username=None):
         bot_token = settings.TELEGRAM_BOT_TOKEN
         channel_id = settings.TELEGRAM_CHANNEL_ID
         
+        logger.info(f"Starting order notification. Bot token: {bot_token[:10] if bot_token else 'None'}..., Channel ID: {channel_id}")
+        
         if not bot_token:
             logger.warning("TELEGRAM_BOT_TOKEN не настроен, пропускаем отправку уведомления")
+            return
+        
+        if not channel_id:
+            logger.warning("TELEGRAM_CHANNEL_ID не настроен, пропускаем отправку уведомления")
             return
         
         bot = Bot(token=bot_token)
@@ -60,23 +66,23 @@ async def send_order_notification(order, items_data, telegram_username=None):
   Адрес: {order.delivery_address if order.delivery_address else 'Не указан'}
 """
         
-        # Отправляем в канал (если настроен) или логируем
-        if channel_id:
-            try:
-                # Убираем @ если есть
-                chat_id = channel_id.lstrip('@')
-                await bot.send_message(
-                    chat_id=chat_id,
-                    text=message,
-                    parse_mode='HTML'
-                )
-                logger.info(f"Order notification sent to Telegram channel: {channel_id}")
-            except Exception as e:
-                logger.error(f"Failed to send order notification to Telegram: {str(e)}")
-        else:
-            # Если канал не настроен, просто логируем
-            logger.info(f"New order notification:\n{message}")
+        # Подготавливаем chat_id: убираем @ если есть, оставляем как есть для числовых ID
+        chat_id = channel_id.lstrip('@')
+        logger.info(f"Attempting to send message to chat_id: {chat_id}")
+        
+        try:
+            await bot.send_message(
+                chat_id=chat_id,
+                text=message,
+                parse_mode='HTML'
+            )
+            logger.info(f"✅ Order notification sent to Telegram channel: {channel_id}")
+        except Exception as e:
+            logger.error(f"❌ Failed to send order notification to Telegram: {str(e)}")
+            logger.error(f"Error details: chat_id={chat_id}, channel_id={channel_id}")
             
+    except ImportError as e:
+        logger.error(f"Failed to import telegram library: {str(e)}")
     except Exception as e:
         logger.error(f"Error sending order notification: {str(e)}", exc_info=True)
 

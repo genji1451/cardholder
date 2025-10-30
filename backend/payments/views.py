@@ -136,10 +136,18 @@ def create_order(request):
                 logger.error(f"Failed to send order notification: {str(e)}")
                 # Не прерываем создание заказа из-за ошибки уведомления
             
-            # Форматируем сумму для Robokassa (формат: "450.00" или "450")
-            amount_str = f"{float(order.total_amount):.2f}".rstrip('0').rstrip('.')
+            # Форматируем сумму для Robokassa (убираем лишние нули, но оставляем минимум .00)
+            amount = float(order.total_amount)
+            # Убеждаемся, что сумма минимум 1 рубль (минимальная сумма для Robokassa)
+            if amount < 1:
+                amount = 1
+            # Форматируем с сохранением .00 для сумм меньше 100 рублей
+            if amount < 100 and amount >= 1:
+                amount_str = f"{amount:.2f}"
+            else:
+                amount_str = f"{amount:.2f}".rstrip('0').rstrip('.')
             if not amount_str:
-                amount_str = "0"
+                amount_str = "1.00"
             
             # Создаем платеж
             payment = Payment.objects.create(

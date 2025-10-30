@@ -137,8 +137,29 @@ const BoosterPackPage = ({}: BoosterPackPageProps) => {
             onClick={handleOpenPack}
           >
             <div className="pack-wrap">
-              <div className="pack-label">🕸️ SPIDER-MAN</div>
-              <div className="pack-subtitle">BOOSTER PACK</div>
+              <div className="pack-logo-section">
+                <div className="pack-logo">🕸️</div>
+                <div className="pack-age-rating">6+</div>
+              </div>
+              <div className="pack-brand-banner">TRADING CARD GAME</div>
+              
+              <div className="pack-image-section">
+                <div className="pack-hero">🕷️</div>
+                <div className="pack-background-elements">
+                  <div className="cloud cloud-1"></div>
+                  <div className="cloud cloud-2"></div>
+                  <div className="cloud cloud-3"></div>
+                </div>
+              </div>
+              
+              <div className="pack-set-section">
+                <div className="pack-set-name">SPIDER-MAN</div>
+                <div className="pack-set-subname">WEB OF HEROES</div>
+              </div>
+              
+              <div className="pack-content-info">
+                <div className="pack-cards-count">10 ADDITIONAL GAME CARDS</div>
+              </div>
             </div>
             
             {isCutting && (
@@ -151,8 +172,11 @@ const BoosterPackPage = ({}: BoosterPackPageProps) => {
                 className="pack-top-part-flipped"
               >
                 <div className="top-part-content">
-                  <div className="pack-label">🕸️ SPIDER-MAN</div>
-                  <div className="pack-subtitle">BOOSTER PACK</div>
+                  <div className="pack-logo-section">
+                    <div className="pack-logo">🕸️</div>
+                    <div className="pack-age-rating">6+</div>
+                  </div>
+                  <div className="pack-brand-banner">TRADING CARD GAME</div>
                 </div>
               </div>
             )}
@@ -160,8 +184,11 @@ const BoosterPackPage = ({}: BoosterPackPageProps) => {
             {isOpening && !topFlipped && (
               <div className="pack-top-part-static">
                 <div className="top-part-content">
-                  <div className="pack-label">🕸️ SPIDER-MAN</div>
-                  <div className="pack-subtitle">BOOSTER PACK</div>
+                  <div className="pack-logo-section">
+                    <div className="pack-logo">🕸️</div>
+                    <div className="pack-age-rating">6+</div>
+                  </div>
+                  <div className="pack-brand-banner">TRADING CARD GAME</div>
                 </div>
               </div>
             )}

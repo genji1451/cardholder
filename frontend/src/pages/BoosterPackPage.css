@@ -38,14 +38,15 @@
 
 .booster-pack {
   position: relative;
-  width: 300px;
-  height: 450px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 20px;
+  width: 280px;
+  height: 500px;
+  background: linear-gradient(135deg, #1a1a3e 0%, #2d2648 50%, #1a1a3e 100%);
+  border-radius: 15px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   cursor: pointer;
   transition: all 0.3s ease;
   overflow: hidden;
+  border: 3px solid rgba(255, 255, 255, 0.1);
 }
 
 .booster-pack:hover {
@@ -60,12 +61,8 @@
 .pack-wrap {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   height: 100%;
-  padding: 40px;
-  text-align: center;
-  color: white;
+  padding: 20px;
   position: relative;
   z-index: 1;
 }
@@ -75,6 +72,10 @@
   font-weight: bold;
   margin-bottom: 10px;
   text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #4a9eff 0%, #ff6b6b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .pack-subtitle {
@@ -82,6 +83,44 @@
   letter-spacing: 5px;
   text-transform: uppercase;
   opacity: 0.9;
+  color: white;
+}
+
+/* Верхняя орнаментальная полоса */
+.booster-pack::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 20%,
+    rgba(255, 255, 255, 0.1) 40%,
+    rgba(255, 255, 255, 0.05) 60%,
+    rgba(255, 255, 255, 0.1) 80%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+  z-index: 2;
+}
+
+/* Нижняя орнаментальная полоса */
+.booster-pack::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(90deg, 
+    rgba(255, 215, 0, 0.2) 0%,
+    rgba(255, 140, 0, 0.2) 50%,
+    rgba(255, 215, 0, 0.2) 100%
+  );
+  border-top: 2px solid rgba(255, 215, 0, 0.3);
+  z-index: 2;
 }
 
 /* Эффект разрезания - золотая линия */
@@ -147,14 +186,187 @@
   transform-origin: bottom center;
 }
 
-.top-part-content .pack-label {
-  font-size: 1.5rem;
-  margin-bottom: 5px;
+/* Логотип и рейтинг */
+.pack-logo-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
 }
 
-.top-part-content .pack-subtitle {
-  font-size: 0.8rem;
-  letter-spacing: 3px;
+.pack-logo {
+  font-size: 2.5rem;
+  font-weight: bold;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.pack-age-rating {
+  font-size: 0.9rem;
+  padding: 4px 8px;
+  background: white;
+  border: 2px solid #333;
+  border-radius: 4px;
+  color: #333;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+}
+
+/* Баннер бренда */
+.pack-brand-banner {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-align: center;
+  border: 2px solid white;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Секция с изображением героя */
+.pack-image-section {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  overflow: hidden;
+}
+
+.pack-hero {
+  font-size: 10rem;
+  z-index: 3;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5));
+  animation: heroFloat 3s ease-in-out infinite;
+}
+
+@keyframes heroFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+}
+
+/* Фоновые элементы */
+.pack-background-elements {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50px;
+  filter: blur(20px);
+  animation: cloudFloat 4s ease-in-out infinite;
+}
+
+.cloud-1 {
+  width: 80px;
+  height: 40px;
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.cloud-2 {
+  width: 60px;
+  height: 30px;
+  top: 40%;
+  right: 15%;
+  animation-delay: 1s;
+}
+
+.cloud-3 {
+  width: 100px;
+  height: 50px;
+  bottom: 30%;
+  left: 50%;
+  animation-delay: 2s;
+}
+
+@keyframes cloudFloat {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(20px);
+  }
+}
+
+/* Название серии */
+.pack-set-section {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.pack-set-name {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 
+    0 0 10px rgba(255, 215, 0, 0.8),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+  margin-bottom: 5px;
+  letter-spacing: 2px;
+}
+
+.pack-set-subname {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 
+    0 0 8px rgba(255, 215, 0, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+}
+
+/* Информация о содержимом */
+.pack-content-info {
+  text-align: center;
+}
+
+.pack-cards-count {
+  font-size: 0.7rem;
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Стили для верхней части при открытии */
+.top-part-content .pack-logo-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.top-part-content .pack-logo {
+  font-size: 1.5rem;
+}
+
+.top-part-content .pack-age-rating {
+  font-size: 0.7rem;
+  padding: 3px 6px;
+  min-width: 25px;
+}
+
+.top-part-content .pack-brand-banner {
+  font-size: 0.6rem;
+  padding: 4px 10px;
 }
 
 /* Поворачивающаяся верхняя часть */

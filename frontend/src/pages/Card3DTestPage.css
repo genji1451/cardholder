@@ -65,137 +65,18 @@
   transform: rotateY(180deg);
 }
 
-/* Лицевая сторона */
-.card3d-test-image-wrapper {
-  width: 100%;
-  height: 400px;
-  overflow: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.card3d-test-image {
+/* Полное изображение на всю карточку */
+.card3d-test-full-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
 }
 
-.card3d-test-card:hover .card3d-test-image {
-  transform: scale(1.05);
+.card3d-test-card:hover .card3d-test-full-image {
+  transform: scale(1.02);
 }
 
-.card3d-test-info {
-  padding: 20px;
-  text-align: center;
-  background: white;
-}
-
-.card3d-test-info h2 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.card3d-test-info p {
-  color: #666;
-  margin-bottom: 15px;
-  font-size: 1rem;
-}
-
-.card3d-test-price {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #667eea;
-  margin-bottom: 10px;
-}
-
-.card3d-test-hint {
-  font-size: 0.9rem;
-  color: #999;
-  font-style: italic;
-  margin-top: 10px;
-}
-
-/* Обратная сторона */
-.card3d-test-back-content {
-  padding: 30px;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  color: white;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.card3d-test-back-content h2 {
-  font-size: 2rem;
-  margin-bottom: 30px;
-  text-align: center;
-  color: #ffd700;
-}
-
-.card3d-test-back-info {
-  flex: 1;
-}
-
-.card3d-test-back-section {
-  margin-bottom: 15px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  font-size: 1rem;
-}
-
-.card3d-test-back-section strong {
-  display: block;
-  margin-bottom: 5px;
-  color: #ffd700;
-}
-
-.card3d-test-back-stats {
-  display: flex;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.stat-item {
-  flex: 1;
-  text-align: center;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-}
-
-.stat-label {
-  display: block;
-  font-size: 0.9rem;
-  margin-bottom: 8px;
-  color: #ccc;
-}
-
-.stat-value {
-  display: block;
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #ffd700;
-}
-
-.card3d-test-back-qr {
-  text-align: center;
-  padding: 20px;
-  background: white;
-  border-radius: 10px;
-  margin-top: 20px;
-}
-
-.qr-placeholder {
-  font-size: 3rem;
-  color: #333;
-  font-weight: bold;
-}
 
 /* Инструкции */
 .card3d-test-instructions {
@@ -275,9 +156,6 @@
     height: 550px;
   }
 
-  .card3d-test-image-wrapper {
-    height: 350px;
-  }
 
   .card3d-test-instructions {
     padding: 20px;
@@ -306,9 +184,6 @@
     height: 500px;
   }
 
-  .card3d-test-image-wrapper {
-    height: 300px;
-  }
 
   .card3d-test-controls {
     flex-direction: column;

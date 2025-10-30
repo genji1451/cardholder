@@ -9,7 +9,7 @@ const Card3DTestPage = ({}: Card3DTestPageProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current || isFlipped) return;
+    if (!cardRef.current) return;
 
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -25,9 +25,7 @@ const Card3DTestPage = ({}: Card3DTestPageProps) => {
   };
 
   const handleMouseLeave = () => {
-    if (!isFlipped) {
-      setRotation({ x: 0, y: 0 });
-    }
+    setRotation({ x: 0, y: 0 });
   };
 
   const handleCardClick = () => {
@@ -50,55 +48,27 @@ const Card3DTestPage = ({}: Card3DTestPageProps) => {
           onMouseLeave={handleMouseLeave}
           onClick={handleCardClick}
           style={{
-            transform: `perspective(1000px) rotateX(${isFlipped ? 0 : rotation.x}deg) rotateY(${isFlipped ? 0 : rotation.y}deg) ${
-              isFlipped ? 'rotateY(180deg)' : ''
-            }`,
+            transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${isFlipped ? rotation.y + 180 : rotation.y}deg)`,
           }}
         >
           <div className="card3d-test-face card3d-test-front">
-            <div className="card3d-test-image-wrapper">
-              <img 
-                src="/images/spiderman/001.png" 
-                alt="Card Front"
-                className="card3d-test-image"
-              />
-            </div>
-            <div className="card3d-test-info">
-              <h2>Карточный картель #001</h2>
-              <p>Первая карта мемной серии</p>
-              <div className="card3d-test-price">300₽</div>
-              <div className="card3d-test-hint">Нажмите, чтобы перевернуть 👆</div>
-            </div>
+            <img 
+              src="/images/spiderman/001.png" 
+              alt="Card Front"
+              className="card3d-test-full-image"
+            />
           </div>
 
           <div className="card3d-test-face card3d-test-back">
-            <div className="card3d-test-back-content">
-              <h2>🕸️ Spider-Man Cards</h2>
-              <div className="card3d-test-back-info">
-                <div className="card3d-test-back-section">
-                  <strong>Серия:</strong> Мемная
-                </div>
-                <div className="card3d-test-back-section">
-                  <strong>Номер:</strong> 001
-                </div>
-                <div className="card3d-test-back-section">
-                  <strong>Дата выпуска:</strong> 2024
-                </div>
-                <div className="card3d-test-back-stats">
-                  <div className="stat-item">
-                    <span className="stat-label">Редкость</span>
-                    <span className="stat-value">⭐⭐⭐</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-label">Тираж</span>
-                    <span className="stat-value">1 шт</span>
-                  </div>
-                </div>
-              </div>
-              <div className="card3d-test-back-qr">
-                <div className="qr-placeholder">📱 QR CODE</div>
-              </div>
-            </div>
+            <img 
+              src="/images/spiderman/back-card.png" 
+              alt="Card Back"
+              className="card3d-test-full-image"
+              onError={(e) => {
+                // Если изображение не найдено, используем placeholder
+                e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="600"%3E%3Crect fill="%23667eea" width="400" height="600"/%3E%3Ctext x="50%25" y="50%25" font-size="60" fill="white" text-anchor="middle" dominant-baseline="middle"%3E🕸️%3C/text%3E%3C/svg%3E';
+              }}
+            />
           </div>
         </div>
       </div>
@@ -106,10 +76,10 @@ const Card3DTestPage = ({}: Card3DTestPageProps) => {
       <div className="card3d-test-instructions">
         <h3>🎮 Инструкции:</h3>
         <ul>
-          <li>✨ Наведите мышь на карточку - она будет наклоняться</li>
+          <li>✨ Наведите мышь на карточку - она будет наклоняться в 3D</li>
           <li>🔄 Нажмите на карточку - она перевернется обратной стороной</li>
           <li>🎨 Кликните еще раз - карточка вернется в исходное положение</li>
-          <li>⚡ Эффект 3D работает только для лицевой стороны</li>
+          <li>⚡ 3D эффект работает на обеих сторонах карточки!</li>
         </ul>
       </div>
 

@@ -32,7 +32,7 @@ const mockProducts: Product[] = [
     id: 999,
     title: "🧪 ТЕСТОВЫЙ ТОВАР",
     description: "Тестовый товар для проверки оплаты и бесплатной доставки",
-    price: 10,
+    price: 1000,
     category: 'meme',
     isLimited: false,
     image: '/images/spiderman/001.png',

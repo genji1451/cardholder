@@ -30,6 +30,10 @@ const CheckoutForm = ({ onClose }: CheckoutFormProps) => {
   };
 
   const calculateDeliveryCost = (method: string) => {
+    // Проверка на тестовый товар (ID 999)
+    const hasTestProduct = cart.some(item => item.id === 999);
+    if (hasTestProduct) return 0; // Бесплатная доставка для тестового товара
+    
     const total = getTotalPrice();
     if (total >= 1000) return 0; // Бесплатная доставка от 1000₽
     

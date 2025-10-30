@@ -9,6 +9,7 @@ from django.views.decorators.http import require_POST
 from django.conf import settings
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+import re
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -175,16 +176,26 @@ def create_order(request):
             # Robokassa ограничивает Description до 100 символов, делаем компактно
             # Используем данные из запроса, так как товары уже созданы в сериализаторе
             try:
+                # Утилита: удаляем эмодзи и не-базовые символы (Robokassa может их не принимать)
+                def sanitize_text(text: str) -> str:
+                    if not text:
+                        return ''
+                    # Убираем суррогатные пары/эмодзи (символы за пределами BMP)
+                    text = ''.join(ch for ch in text if ord(ch) <= 0xFFFF)
+                    # Разрешаем буквы/цифры/пробелы и базовую пунктуацию
+                    text = re.sub(r"[^\w\s@#\-\.,:;\+/()|]", '', text, flags=re.UNICODE)
+                    return text.strip()
+
                 items_list = []
                 # Пробуем получить товары из БД (они должны быть созданы)
                 order_items = order.items.all()
                 if order_items.exists():
                     for item in order_items:
-                        items_list.append(f"{item.product_title} x{item.quantity}")
+                        items_list.append(f"{sanitize_text(item.product_title)} x{item.quantity}")
                 else:
                     # Если товары еще не сохранены, используем сохраненные данные из запроса
                     for item_data in items_data:
-                        title = item_data.get('product_title', 'Товар')
+                        title = sanitize_text(item_data.get('product_title', 'Товар'))
                         quantity = item_data.get('quantity', 1)
                         items_list.append(f"{title} x{quantity}")
                 
@@ -193,24 +204,24 @@ def create_order(request):
                 
                 # Товары (первые 30 символов)
                 if items_list:
-                    items_str = ", ".join(items_list)[:30]
+                    items_str = sanitize_text(", ".join(items_list))[:30]
                     if items_str:
                         description_parts.append(f"Товары: {items_str}")
                 
                 # Email (первые 20 символов)
                 if order.email:
-                    email_str = order.email[:20]
+                    email_str = sanitize_text(order.email)[:20]
                     description_parts.append(f"Email: {email_str}")
                 
                 # Адрес доставки (первые 20 символов)
                 if order.delivery_address:
-                    address_str = order.delivery_address[:20]
+                    address_str = sanitize_text(order.delivery_address)[:20]
                     description_parts.append(f"Адрес: {address_str}")
                 
                 # Ник в телеграм (если указан)
                 telegram_username = getattr(order, 'telegram_username', None)
                 if telegram_username:
-                    telegram_str = telegram_username[:15]
+                    telegram_str = sanitize_text(telegram_username)[:15]
                     description_parts.append(f"TG: {telegram_str}")
                 
                 # Если ничего не добавилось, используем ID заказа

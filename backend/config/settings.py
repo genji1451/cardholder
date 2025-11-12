@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-secret")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DJANGO_DEBUG", "True").lower() == "true"
 
-ALLOWED_HOSTS = [h.strip() for h in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,cardholder.onrender.com").split(",") if h.strip()]
+ALLOWED_HOSTS = [h.strip() for h in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if h.strip()]
 
 
 # Application definition
@@ -189,7 +189,6 @@ TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID", "-1003230450630")
 CSRF_TRUSTED_ORIGINS = [
     'https://portfolio.cards',
     'https://*.vercel.app',
-    'https://cardholder.onrender.com',
 ]
 
 # DRF
@@ -208,7 +207,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
-# Production settings for Render
+# Production settings
 if not DEBUG:
     try:
         import dj_database_url

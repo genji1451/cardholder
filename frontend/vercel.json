@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://82.97.243.150/api/:path*"
+      "destination": "https://api.portfolio.cards/api/:path*"
     },
     {
       "source": "/(.*)",

@@ -11,20 +11,25 @@
 
 .email-auth-header h2 {
   font-size: 1.8rem;
+  font-weight: 900;
   margin-bottom: 0.5rem;
-  color: #2d3748;
+  background: linear-gradient(135deg, #e31937, #0066cc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .email-auth-header p {
-  color: #718096;
+  color: var(--text-secondary, #9ca3af);
   font-size: 0.95rem;
 }
 
 .email-auth-form {
-  background: white;
+  background: var(--bg-card, #1a1a1a);
   padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  border: 1px solid var(--border-color, #2a2a2a);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .form-group {
@@ -40,7 +45,7 @@
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #4a5568;
+  color: var(--text-primary, #f9fafb);
   font-weight: 500;
   font-size: 0.9rem;
 }
@@ -48,17 +53,24 @@
 .form-group input {
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #e2e8f0;
+  background: var(--bg-secondary, #2a2a2a);
+  border: 2px solid var(--border-color, #3a3a3a);
   border-radius: 8px;
   font-size: 1rem;
+  color: var(--text-primary, #f9fafb);
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
+.form-group input::placeholder {
+  color: var(--text-tertiary, #6b7280);
+}
+
 .form-group input:focus {
   outline: none;
-  border-color: #4299e1;
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+  border-color: #0066cc;
+  background: var(--bg-secondary, #333);
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
 }
 
 .form-group input.error {
@@ -70,9 +82,9 @@
 }
 
 .form-group input:disabled {
-  background-color: #f7fafc;
+  background-color: var(--bg-disabled, #1a1a1a);
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 .error-text {
@@ -135,7 +147,7 @@
 .toggle-mode-button {
   background: none;
   border: none;
-  color: #4299e1;
+  color: #0066cc;
   font-size: 0.95rem;
   cursor: pointer;
   padding: 0.5rem 1rem;
@@ -143,7 +155,7 @@
 }
 
 .toggle-mode-button:hover:not(:disabled) {
-  color: #2b6cb0;
+  color: #0088ff;
   text-decoration: underline;
 }
 

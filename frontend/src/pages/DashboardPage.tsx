@@ -19,7 +19,9 @@ const DashboardPage = () => {
   if (isLoading) {
     return (
       <div className="dashboard-page">
-        <div className="loading">Loading dashboard...</div>
+        <div className="dashboard-container">
+          <div className="loading">Loading dashboard...</div>
+        </div>
       </div>
     );
   }
@@ -27,27 +29,31 @@ const DashboardPage = () => {
   if (error) {
     return (
       <div className="dashboard-page">
-        <div className="error">Error loading dashboard data</div>
+        <div className="dashboard-container">
+          <div className="error">Error loading dashboard data</div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="dashboard-page">
-      <div className="dashboard-header">
-        <h1>Dashboard</h1>
-        <p>Welcome to your Spider-Man cards collection</p>
-      </div>
-
-      <div className="dashboard-grid">
-        <div className="dashboard-main">
-          <OverviewCards overview={overview} />
-          <Charts />
+      <div className="dashboard-container">
+        <div className="dashboard-header">
+          <h1>🕷️ Dashboard</h1>
+          <p>Welcome to your Spider-Man cards collection</p>
         </div>
-        
-        <div className="dashboard-sidebar">
-          <SubscriptionChecker />
-          <TopExpensive />
+
+        <div className="dashboard-grid">
+          <div className="dashboard-main">
+            <OverviewCards overview={overview} />
+            <Charts />
+          </div>
+          
+          <div className="dashboard-sidebar">
+            <SubscriptionChecker />
+            <TopExpensive />
+          </div>
         </div>
       </div>
     </div>

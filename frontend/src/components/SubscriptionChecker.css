@@ -1,11 +1,13 @@
-/* Subscription Checker Component Styles */
+/* Subscription Checker - Spider-Man Theme */
 
 .subscription-checker {
-  background: var(--bg-card, #1a1a1a);
+  background: rgba(30, 41, 59, 0.8);
+  border: 2px solid rgba(227, 25, 55, 0.3);
   border-radius: 16px;
-  border: 1px solid var(--border-color, #2a2a2a);
-  padding: 1.5rem;
-  margin: 1rem 0;
+  padding: 2rem;
+  margin: 0;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
 }
 
 .subscription-notice {
@@ -37,10 +39,11 @@
 }
 
 .subscription-header h3 {
-  color: var(--text-primary, #f9fafb);
-  font-size: 1.25rem;
+  color: #fff;
+  font-size: 1.5rem;
   font-weight: 700;
   margin: 0;
+  text-shadow: 2px 2px 0 rgba(227, 25, 55, 0.5);
 }
 
 .check-button {

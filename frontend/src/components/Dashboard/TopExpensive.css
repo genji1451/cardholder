@@ -1,14 +1,20 @@
+/* Top Expensive - Spider-Man Theme */
+
 .top-expensive {
-  background: white;
-  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 2px solid rgba(227, 25, 55, 0.3);
+  border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
 }
 
 .top-expensive h2 {
   margin: 0 0 1.5rem 0;
-  color: #2d3748;
-  font-size: 1.5rem;
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 0 rgba(227, 25, 55, 0.5);
 }
 
 .trades-list {
@@ -21,34 +27,44 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  background: #f7fafc;
-  border-radius: 8px;
-  border-left: 4px solid #4299e1;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, rgba(227, 25, 55, 0.15), rgba(0, 102, 204, 0.15));
+  border-radius: 12px;
+  border-left: 4px solid #e31937;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.trade-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 6px 20px rgba(227, 25, 55, 0.3);
+  border-left-width: 6px;
 }
 
 .trade-info h4 {
-  margin: 0 0 0.25rem 0;
-  color: #2d3748;
-  font-size: 1rem;
-  font-weight: 600;
+  margin: 0 0 0.4rem 0;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
 }
 
 .trade-details {
   margin: 0;
-  color: #718096;
-  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
 }
 
 .trade-date {
-  color: #a0aec0;
+  color: rgba(255, 255, 255, 0.5);
   font-size: 0.85rem;
   font-weight: 500;
+  text-align: right;
 }
 
 .no-data {
   text-align: center;
-  color: #a0aec0;
+  color: rgba(255, 255, 255, 0.5);
   font-style: italic;
-  padding: 2rem;
+  padding: 3rem 2rem;
+  font-size: 1.1rem;
 }

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
-  (import.meta.env.PROD ? 'https://cardholder.onrender.com/api' : 'http://localhost:8000/api');
+  (import.meta.env.PROD ? '/api' : 'http://localhost:8000/api');
 
 // Debug: выводим URL в консоль
 console.log('API_BASE_URL:', API_BASE_URL);

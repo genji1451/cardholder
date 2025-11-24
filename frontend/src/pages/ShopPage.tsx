@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import type { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
-import Footer from '../components/Footer';
 import './ShopPage.css';
 
 interface ProductOptions {
@@ -27,7 +27,6 @@ interface Product {
 
 // Данные товаров
 const mockProducts: Product[] = [
-  // Тестовый товар для проверки оплаты
   {
     id: 999,
     title: "🧪 ТЕСТОВЫЙ ТОВАР",
@@ -38,7 +37,6 @@ const mockProducts: Product[] = [
     image: '/images/spiderman/001.png',
     available: true,
   },
-  // Мемная серия
   {
     id: 1,
     title: "Карточный картель #001",
@@ -90,7 +88,7 @@ const mockProducts: Product[] = [
   },
   {
     id: 5,
-    title: "Пачка кириешек#005",
+    title: "Пачка кириешек #005",
     description: "Пятая карта мемной серии. Обычный тираж.",
     price: 300,
     category: 'meme',
@@ -110,7 +108,7 @@ const mockProducts: Product[] = [
   },
   {
     id: 7,
-    title: "Собаки лают-караван прет #007",
+    title: "Собаки лают #007",
     description: "Седьмая карта мемной серии. Лимитированный тираж.",
     price: 300,
     category: 'meme',
@@ -120,67 +118,6 @@ const mockProducts: Product[] = [
     available: false,
     inDevelopment: true,
   },
-  {
-    id: 8,
-    title: "Мемная карта #008",
-    description: "Восьмая карта мемной серии.",
-    price: 300,
-    category: 'meme',
-    image: '/images/spiderman/card_3_2.svg',
-    available: false,
-    inDevelopment: true,
-  },
-  {
-    id: 9,
-    title: "Мемная карта #009",
-    description: "Девятая карта мемной серии.",
-    price: 300,
-    category: 'meme',
-    image: '/images/spiderman/card_3_3.svg',
-    available: false,
-    inDevelopment: true,
-  },
-  {
-    id: 10,
-    title: "Мемная карта #010",
-    description: "Десятая карта мемной серии.",
-    price: 300,
-    category: 'meme',
-    image: '/images/spiderman/card_1_1.svg',
-    available: false,
-    inDevelopment: true,
-  },
-  {
-    id: 11,
-    title: "Мемная карта #011",
-    description: "Одиннадцатая карта мемной серии.",
-    price: 300,
-    category: 'meme',
-    image: '/images/spiderman/card_1_2.svg',
-    available: false,
-    inDevelopment: true,
-  },
-  {
-    id: 12,
-    title: "Мемная карта #012",
-    description: "Двенадцатая карта мемной серии.",
-    price: 300,
-    category: 'meme',
-    image: '/images/spiderman/card_1_3.svg',
-    available: false,
-    inDevelopment: true,
-  },
-  {
-    id: 13,
-    title: "Мемная карта #013",
-    description: "Тринадцатая карта мемной серии.",
-    price: 300,
-    category: 'meme',
-    image: '/images/spiderman/card_2_1.svg',
-    available: false,
-    inDevelopment: true,
-  },
-  // Картины
   {
     id: 101,
     title: "Пятно",
@@ -207,7 +144,6 @@ const mockProducts: Product[] = [
     image: '/images/spiderman/daily.png',
     available: true,
   },
-  // Дизайнерские карточки
   {
     id: 201,
     title: "Персональная карточка",
@@ -223,344 +159,167 @@ const ShopPage = () => {
   const { addToCart, getTotalItems } = useCart();
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'original' | 'meme' | 'art' | 'design'>('all');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [hasCase, setHasCase] = useState(false);
-  const [filmType, setFilmType] = useState<'none' | 'holographic' | 'metallic'>('none');
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const filteredProducts = mockProducts.filter(product => {
     return selectedCategory === 'all' || product.category === selectedCategory;
   });
 
-  const calculatePrice = (product: Product) => {
-    let totalPrice = product.price;
-    if (hasCase) totalPrice += 300;
-    if (filmType === 'holographic') totalPrice += 100;
-    if (filmType === 'metallic') totalPrice += 100;
-    return totalPrice;
-  };
-
-  const openProductModal = (product: Product) => {
-    if (!product.available) return;
-    setSelectedProduct(product);
-    setHasCase(false);
-    setFilmType('none');
-  };
-
-  const closeProductModal = () => {
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
+    // Simple notification logic could be added here
+    const btn = document.getElementById(`btn-${product.id}`);
+    if (btn) {
+      const originalText = btn.innerText;
+      btn.innerText = "ADDED ✓";
+      setTimeout(() => {
+        btn.innerText = originalText;
+      }, 1000);
+    }
     setSelectedProduct(null);
-    setHasCase(false);
-    setFilmType('none');
-  };
-
-  const handleAddToCart = () => {
-    if (!selectedProduct) return;
-    
-    const productWithOptions = {
-      ...selectedProduct,
-      price: calculatePrice(selectedProduct),
-      options: {
-        hasCase,
-        filmType
-      }
-    };
-    
-    addToCart(productWithOptions);
-    
-    // Показываем уведомление
-    const notification = document.createElement('div');
-    notification.className = 'cart-notification';
-    notification.textContent = `✓ "${selectedProduct.title}" добавлен в корзину`;
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-      notification.classList.add('show');
-    }, 10);
-    
-    setTimeout(() => {
-      notification.classList.remove('show');
-      setTimeout(() => notification.remove(), 300);
-    }, 2000);
-    
-    closeProductModal();
   };
 
   return (
     <div className="shop-page">
-      {/* Simple Navigation */}
-      <nav className="shop-nav">
-        <a href="https://portfolio.cards/shop" className="shop-nav-logo">
-          🕷️ Portfolio Cards
-        </a>
-        <div className="shop-nav-links">
-          <Link to="/cart" className="shop-nav-link cart-link">
-            🛒 Корзина
-            {getTotalItems() > 0 && (
-              <span className="cart-badge">{getTotalItems()}</span>
-            )}
-          </Link>
-          <a href="https://portfolio.cards/shop" className="shop-nav-link">🏠 Главная</a>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <div className="shop-hero">
-        <div className="hero-content">
-          <div className="shop-logo">🛍️</div>
-          <h1>CGC Shop</h1>
-        </div>
-        <div className="hero-spider-web"></div>
-      </div>
-
-      {/* Filters */}
-      <section className="filters-section">
-        <div className="filter-group">
-          <label>Категория:</label>
-          <div className="filter-buttons">
-            <button
-              className={selectedCategory === 'all' ? 'active' : ''}
-              onClick={() => setSelectedCategory('all')}
-            >
-              🌐 Все
-            </button>
-            <button
-              className={selectedCategory === 'original' ? 'active' : ''}
-              onClick={() => setSelectedCategory('original')}
-            >
-              ⭐ Оригинальная серия
-            </button>
-            <button
-              className={selectedCategory === 'meme' ? 'active' : ''}
-              onClick={() => setSelectedCategory('meme')}
-            >
-              😄 Мемная серия
-            </button>
-            <button
-              className={selectedCategory === 'art' ? 'active' : ''}
-              onClick={() => setSelectedCategory('art')}
-            >
-              🎨 Картины
-            </button>
-            <button
-              className={selectedCategory === 'design' ? 'active' : ''}
-              onClick={() => setSelectedCategory('design')}
-            >
-              ✨ Дизайнерские карточки
-            </button>
+      <div className="shop-container">
+        {/* Navigation */}
+        <nav className="shop-header">
+          <div>
+            <span className="shop-subtitle">Exclusive Collection // 2025</span>
+            <h1 className="shop-title">Spider<br/>Shop</h1>
           </div>
-        </div>
-      </section>
-
-      {/* Products Grid */}
-      <section className="products-section">
-        {selectedCategory === 'original' ? (
-          <div className="in-development-message">
-            <div className="dev-icon">🚧</div>
-            <h2>Оригинальная серия</h2>
-            <p>Раздел находится в разработке</p>
-            <p className="dev-subtitle">Скоро здесь появятся эксклюзивные карты!</p>
+          <div className="nav-container">
+             <Link to="/" className="nav-link">Home</Link>
+             <Link to="/cart" className="nav-link">
+                Cart [{getTotalItems()}]
+             </Link>
           </div>
-        ) : (
-          <>
-            <div className="products-header">
-              <h2>
-                {selectedCategory === 'all' && '🌐 Все товары'}
-                {selectedCategory === 'meme' && '😄 Мемная серия'}
-                {selectedCategory === 'art' && '🎨 Картины'}
-                {selectedCategory === 'design' && '✨ Дизайнерские карточки'}
-              </h2>
-              <div className="products-count">
-                Найдено: {filteredProducts.length}
-              </div>
-            </div>
+        </nav>
 
-            {filteredProducts.length === 0 ? (
-              <div className="no-products">
-                <div className="no-products-icon">🔍</div>
-                <h3>Товары не найдены</h3>
-                <p>Попробуйте изменить фильтры</p>
-              </div>
-            ) : (
-              <div className="products-grid">
-                {filteredProducts.map(product => (
-                  <div 
-                    key={product.id} 
-                    className={`product-card ${(!product.available || product.inDevelopment) ? 'unavailable' : ''}`}
-                  >
-                    <div className="product-image">
-                      <img src={product.image} alt={product.title} />
-                      {product.isLimited && product.limitedInfo && (
-                        <div className={`limited-badge ${product.stock === 0 ? 'sold-out' : product.inDevelopment ? 'in-dev' : 'available'}`}>
-                          ⭐ {product.limitedInfo}
-                        </div>
-                      )}
-                      {/* Темный overlay для проданных карт */}
-                      {((!product.available && !product.inDevelopment) || (product.isLimited && product.stock === 0)) && (
-                        <div className="sold-overlay">ПРОДАНО</div>
-                      )}
-                      {/* Темный overlay для карт в разработке */}
-                      {product.inDevelopment && (
-                        <div className="dev-overlay">В РАЗРАБОТКЕ</div>
-                      )}
-                    </div>
-                    
-                    <div className="product-content">
-                      <h3 className="product-title">{product.title}</h3>
-                      <p className="product-description">{product.description}</p>
-                      
-                      <div className="product-footer">
-                        <div className="product-price">от ₽{product.price.toLocaleString()}</div>
-                        <button
-                          className="buy-button"
-                          onClick={() => openProductModal(product)}
-                          disabled={!product.available}
-                        >
-                          {product.inDevelopment ? '🚧 В разработке' : product.available ? '👁️ Подробнее' : '❌ Продано'}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </>
-        )}
-      </section>
-
-      {/* Contact Section */}
-      <section className="contact-section">
-        <div className="contact-card">
-          <h2>💬 Свяжитесь со мной</h2>
-          <p>
-            Хотите приобрести карточку или картину? Есть вопросы?<br />
-            Напишите мне в Telegram!
-          </p>
-          <a 
-            href="https://t.me/rex_testudo" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="telegram-button"
-          >
-            ✈️ Написать в Telegram
-          </a>
-
+        {/* Filters */}
+        <div className="shop-filters">
+          {['all', 'original', 'meme', 'art', 'design'].map((cat) => (
+            <button
+              key={cat}
+              className={`filter-btn ${selectedCategory === cat ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(cat as any)}
+            >
+              {cat === 'all' ? 'ALL ITEMS' : cat.toUpperCase()}
+            </button>
+          ))}
         </div>
-      </section>
 
-      {/* Product Modal */}
-      {selectedProduct && (
-        <div className="modal-overlay" onClick={closeProductModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={closeProductModal}>✕</button>
-            
-            <div className="modal-body">
-              <div className="modal-image">
-                <img src={selectedProduct.image} alt={selectedProduct.title} />
-                {selectedProduct.isLimited && selectedProduct.limitedInfo && (
-                  <div className={`limited-badge ${selectedProduct.stock === 0 ? 'sold-out' : 'available'}`}>
-                    ⭐ {selectedProduct.limitedInfo}
-                  </div>
-                )}
+        {/* Grid */}
+        <div className="products-grid">
+          {filteredProducts.map((product, index) => (
+            <div 
+              key={product.id} 
+              className="product-card"
+              style={{ '--i': index } as CSSProperties}
+              onClick={() => {
+                if (product.available || product.inDevelopment) {
+                    setSelectedProduct(product);
+                }
+              }}
+            >
+              {/* Badges */}
+              {product.stock === 0 && product.isLimited && (
+                <div className="status-badge sold">SOLD OUT</div>
+              )}
+              {product.isLimited && product.stock !== 0 && (
+                <div className="status-badge limited">LIMITED</div>
+              )}
+              {product.inDevelopment && (
+                <div className="status-badge limited">DEV</div>
+              )}
+
+              <div className="card-image-container">
+                <img src={product.image} alt={product.title} loading="lazy" />
               </div>
               
-              <div className="modal-info">
-                <h2>{selectedProduct.title}</h2>
-                <p className="modal-description">{selectedProduct.description}</p>
+              <div className="card-info">
+                <span className="card-category">{product.category}</span>
+                <h3 className="card-title">{product.title}</h3>
                 
-                {/* Options for Meme cards */}
-                {selectedProduct.category === 'meme' && (
-                  <div className="options-section">
-                    <h3>Выберите вариант:</h3>
-                    
-                    <div className="option-group">
-                      <label className="option-label">
-                        <input
-                          type="checkbox"
-                          checked={hasCase}
-                          onChange={(e) => setHasCase(e.target.checked)}
-                        />
-                        <span className="option-text">
-                          В кейсе <span className="option-price">+300₽</span>
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-                )}
-                
-                {/* Options for Design cards */}
-                {selectedProduct.category === 'design' && (
-                  <div className="options-section">
-                    <h3>Выберите опции:</h3>
-                    
-                    <div className="option-group">
-                      <label className="option-label">
-                        <input
-                          type="checkbox"
-                          checked={hasCase}
-                          onChange={(e) => setHasCase(e.target.checked)}
-                        />
-                        <span className="option-text">
-                          В кейсе <span className="option-price">+300₽</span>
-                        </span>
-                      </label>
-                    </div>
-                    
-                    <div className="option-group">
-                      <h4>Тип пленки:</h4>
-                      <label className="option-label">
-                        <input
-                          type="radio"
-                          name="filmType"
-                          checked={filmType === 'none'}
-                          onChange={() => setFilmType('none')}
-                        />
-                        <span className="option-text">Без пленки</span>
-                      </label>
-                      
-                      <label className="option-label">
-                        <input
-                          type="radio"
-                          name="filmType"
-                          checked={filmType === 'holographic'}
-                          onChange={() => setFilmType('holographic')}
-                        />
-                        <span className="option-text">
-                          Голографическая <span className="option-price">+100₽</span>
-                        </span>
-                      </label>
-                      
-                      <label className="option-label">
-                        <input
-                          type="radio"
-                          name="filmType"
-                          checked={filmType === 'metallic'}
-                          onChange={() => setFilmType('metallic')}
-                        />
-                        <span className="option-text">
-                          Металлическая <span className="option-price">+100₽</span>
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-                )}
-                
-                <div className="modal-footer">
-                  <div className="total-price">
-                    <span>Итого:</span>
-                    <span className="price-value">₽{calculatePrice(selectedProduct).toLocaleString()}</span>
-                  </div>
-                  <button className="add-to-cart-btn" onClick={handleAddToCart}>
-                    🛒 Добавить в корзину
-                  </button>
+                <div className="card-price-row">
+                   <span className="card-price">₽{product.price}</span>
+                   <button 
+                     id={`btn-${product.id}`}
+                     className="glitch-btn"
+                     disabled={!product.available}
+                     onClick={(e) => {
+                       e.stopPropagation();
+                       if (product.available) handleAddToCart(product);
+                     }}
+                   >
+                     {product.available ? 'ADD +' : 'N/A'}
+                   </button>
                 </div>
               </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Empty State */}
+        {filteredProducts.length === 0 && (
+          <div style={{ padding: '4rem', textAlign: 'center', color: '#666', textTransform: 'uppercase', letterSpacing: '2px' }}>
+            No artifacts found in this sector.
+          </div>
+        )}
+      </div>
+
+      {/* Modal */}
+      {selectedProduct && (
+        <div className="modal-overlay" onClick={() => setSelectedProduct(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={() => setSelectedProduct(null)}>✕</button>
+            
+            <div className="modal-left">
+              <img src={selectedProduct.image} alt={selectedProduct.title} />
+            </div>
+            
+            <div className="modal-right">
+              <span className="card-category" style={{fontSize: '1rem', marginBottom: '1rem'}}>
+                {selectedProduct.category} // ID: {selectedProduct.id}
+              </span>
+              
+              <h2 className="modal-title">{selectedProduct.title}</h2>
+              
+              <div className="modal-price">
+                ₽{selectedProduct.price}
+              </div>
+
+              <p className="modal-desc">
+                {selectedProduct.description}
+                {selectedProduct.isLimited && (
+                   <div style={{marginTop: '1rem', color: 'var(--sp-accent-yellow)'}}>
+                     ⚠ LIMITED EDITION: {selectedProduct.limitedInfo}
+                   </div>
+                )}
+              </p>
+
+              {selectedProduct.available ? (
+                  <button 
+                    className="modal-add-btn"
+                    onClick={() => handleAddToCart(selectedProduct)}
+                  >
+                    Add to Collection
+                  </button>
+              ) : (
+                  <button className="modal-add-btn" disabled style={{opacity: 0.5, cursor: 'not-allowed'}}>
+                    {selectedProduct.inDevelopment ? 'Coming Soon' : 'Sold Out'}
+                  </button>
+              )}
             </div>
           </div>
         </div>
       )}
-
-      <Footer />
     </div>
   );
 };
 
 export default ShopPage;
-

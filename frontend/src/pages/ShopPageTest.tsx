@@ -158,7 +158,6 @@ const ShopPageTest = () => {
   const { addToCart, getTotalItems } = useCart();
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'original' | 'meme' | 'art' | 'design'>('all');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [hoveredProduct, setHoveredProduct] = useState<number | null>(null);
 
   // Scroll to top on mount
   useEffect(() => {
@@ -220,8 +219,6 @@ const ShopPageTest = () => {
               key={product.id} 
               className="product-card-test"
               style={{ '--i': index } as React.CSSProperties}
-              onMouseEnter={() => setHoveredProduct(product.id)}
-              onMouseLeave={() => setHoveredProduct(null)}
               onClick={() => {
                 if (product.available || product.inDevelopment) {
                     setSelectedProduct(product);

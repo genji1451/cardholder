@@ -1,0 +1,423 @@
+:root {
+  /* Color Palette - Cyber Noir Spider-Verse */
+  --c-bg-main: #050510;
+  --c-bg-card: rgba(20, 20, 35, 0.6);
+  --c-bg-card-hover: rgba(30, 30, 50, 0.8);
+  
+  --c-accent-primary: #ff003c; /* Electric Red */
+  --c-accent-secondary: #00f0ff; /* Neon Cyan */
+  --c-accent-tertiary: #ffee00; /* Warning Yellow */
+  
+  --c-text-main: #ececf1;
+  --c-text-muted: #8b8b9b;
+  
+  --font-display: "Impact", "Haettenschweiler", "Arial Narrow Bold", sans-serif;
+  --font-mono: "Courier New", "Consolas", monospace;
+  --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.shop-concept-page {
+  background-color: var(--c-bg-main);
+  color: var(--c-text-main);
+  min-height: 100vh;
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(255, 0, 60, 0.05) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(0, 240, 255, 0.05) 0%, transparent 20%);
+}
+
+/* Typography Utilities */
+.text-display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+}
+
+/* Hero Section */
+.concept-hero {
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero-glitch-container {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: clamp(4rem, 15vw, 12rem);
+  line-height: 0.9;
+  margin: 0;
+  position: relative;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--c-text-main);
+}
+
+.hero-title::before,
+.hero-title::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+
+.hero-title::before {
+  color: var(--c-accent-secondary);
+  z-index: -1;
+  transform: translate(-4px, -4px);
+  mix-blend-mode: screen;
+}
+
+.hero-title::after {
+  color: var(--c-accent-primary);
+  z-index: -2;
+  transform: translate(4px, 4px);
+  mix-blend-mode: screen;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  opacity: 0;
+  animation: fadeInUp 0.8s var(--ease-out-expo) 0.5s forwards;
+  color: var(--c-accent-secondary);
+  letter-spacing: 0.2em;
+}
+
+/* Floating Elements in Hero */
+.hero-decoration {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+}
+
+.hero-circle {
+  width: 60vh;
+  height: 60vh;
+  border-radius: 50%;
+  border: 1px dashed var(--c-accent-primary);
+  opacity: 0.2;
+  animation: spin 60s linear infinite;
+}
+
+/* Filters */
+.concept-filters {
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.filter-label {
+  font-size: 0.9rem;
+  color: var(--c-text-muted);
+  text-transform: uppercase;
+}
+
+.filter-buttons-concept {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.filter-btn-concept {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--c-text-muted);
+  padding: 0.8rem 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-expo);
+  position: relative;
+  overflow: hidden;
+}
+
+.filter-btn-concept::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--c-accent-primary);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s var(--ease-out-expo);
+  z-index: -1;
+}
+
+.filter-btn-concept:hover {
+  border-color: var(--c-accent-primary);
+  color: white;
+}
+
+.filter-btn-concept.active {
+  border-color: var(--c-accent-primary);
+  color: white;
+}
+
+.filter-btn-concept.active::before {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Products Grid */
+.concept-grid-section {
+  padding: 2rem 5%;
+}
+
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 3rem;
+}
+
+/* Product Card */
+.concept-card {
+  background: var(--c-bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  position: relative;
+  transition: all 0.4s var(--ease-out-expo);
+  cursor: pointer;
+  opacity: 0;
+  animation: fadeUpStagger 0.6s forwards;
+  animation-delay: calc(var(--i) * 0.1s);
+  backdrop-filter: blur(10px);
+}
+
+.concept-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  border-color: var(--c-accent-secondary);
+  box-shadow: 0 20px 40px rgba(0, 240, 255, 0.1);
+  background: var(--c-bg-card-hover);
+}
+
+.card-image-wrapper {
+  position: relative;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  background: #000;
+}
+
+.card-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s var(--ease-out-expo);
+  filter: grayscale(0.2) contrast(1.1);
+}
+
+.concept-card:hover img {
+  transform: scale(1.1);
+  filter: grayscale(0) contrast(1.2);
+}
+
+.card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%);
+  opacity: 0.6;
+  transition: opacity 0.3s;
+}
+
+.card-badges {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.concept-badge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 0.3rem 0.6rem;
+  background: #000;
+  color: white;
+  border: 1px solid white;
+}
+
+.concept-badge.sold {
+  border-color: var(--c-accent-primary);
+  color: var(--c-accent-primary);
+}
+
+.card-info {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  margin: 0;
+  font-weight: normal;
+  max-width: 70%;
+}
+
+.card-price {
+  font-family: var(--font-mono);
+  color: var(--c-accent-secondary);
+  font-size: 1.1rem;
+}
+
+.card-meta {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--c-text-muted);
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUpStagger {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Modal (Simplified for Concept) */
+.concept-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.9);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(20px);
+}
+
+.concept-modal {
+  background: #111;
+  border: 1px solid var(--c-accent-secondary);
+  max-width: 900px;
+  width: 90%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  box-shadow: 0 0 100px rgba(0, 240, 255, 0.2);
+}
+
+.modal-img-col img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.modal-info-col {
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  margin: 0;
+  color: white;
+  line-height: 0.9;
+}
+
+.modal-desc {
+  color: var(--c-text-muted);
+  line-height: 1.6;
+}
+
+.modal-price {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  color: var(--c-accent-primary);
+}
+
+.modal-actions {
+  margin-top: auto;
+}
+
+.btn-glitch {
+  width: 100%;
+  background: white;
+  color: black;
+  border: none;
+  padding: 1.2rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: 0.2s;
+}
+
+.btn-glitch:hover {
+  background: var(--c-accent-primary);
+  color: white;
+}
+
+.close-modal {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 4rem;
+  }
+  .concept-modal {
+    grid-template-columns: 1fr;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-img-col {
+    height: 300px;
+  }
+  .modal-info-col {
+    padding: 1.5rem;
+  }
+}
+

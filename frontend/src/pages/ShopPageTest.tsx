@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import './ShopPageTest.css';
@@ -218,7 +218,7 @@ const ShopPageTest = () => {
             <div 
               key={product.id} 
               className="product-card-test"
-              style={{ '--i': index } as React.CSSProperties}
+              style={{ '--i': index } as CSSProperties}
               onClick={() => {
                 if (product.available || product.inDevelopment) {
                     setSelectedProduct(product);

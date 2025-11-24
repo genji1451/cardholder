@@ -175,7 +175,7 @@ const ShopPage = () => {
     const btn = document.getElementById(`btn-${product.id}`);
     if (btn) {
       const originalText = btn.innerText;
-      btn.innerText = "ADDED ✓";
+      btn.innerText = "ДОБАВЛЕНО ✓";
       setTimeout(() => {
         btn.innerText = originalText;
       }, 1000);
@@ -188,36 +188,42 @@ const ShopPage = () => {
       <div className="shop-container">
         {/* Navigation */}
         <nav className="shop-header">
-          <div>
-            <span className="shop-subtitle">Exclusive Collection // 2025</span>
-            <h1 className="shop-title">Spider<br/>Shop</h1>
+          <div className="header-left">
+            <span className="shop-subtitle">ЭКСКЛЮЗИВНАЯ КОЛЛЕКЦИЯ // 2025</span>
+            <h1 className="shop-title">ПАУЧИЙ<br/>МАГАЗИН</h1>
           </div>
           <div className="nav-container">
-             <Link to="/" className="nav-link">Home</Link>
+             <Link to="/" className="nav-link">Главная</Link>
              <Link to="/cart" className="nav-link">
-                Cart [{getTotalItems()}]
-             </Link>
-          </div>
-        </nav>
+                Корзина [{getTotalItems()}]
+          </Link>
+        </div>
+      </nav>
 
-        {/* Filters */}
+      {/* Filters */}
         <div className="shop-filters">
-          {['all', 'original', 'meme', 'art', 'design'].map((cat) => (
+          {[
+            { value: 'all', label: 'ВСЁ' },
+            { value: 'original', label: 'ОРИГИНАЛ' },
+            { value: 'meme', label: 'МЕМЫ' },
+            { value: 'art', label: 'ИСКУССТВО' },
+            { value: 'design', label: 'ДИЗАЙН' }
+          ].map(({ value, label }) => (
             <button
-              key={cat}
-              className={`filter-btn ${selectedCategory === cat ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(cat as any)}
+              key={value}
+              className={`filter-btn ${selectedCategory === value ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(value as any)}
             >
-              {cat === 'all' ? 'ALL ITEMS' : cat.toUpperCase()}
+              {label}
             </button>
           ))}
         </div>
 
         {/* Grid */}
-        <div className="products-grid">
+              <div className="products-grid">
           {filteredProducts.map((product, index) => (
-            <div 
-              key={product.id} 
+                  <div 
+                    key={product.id} 
               className="product-card"
               style={{ '--i': index } as CSSProperties}
               onClick={() => {
@@ -228,49 +234,49 @@ const ShopPage = () => {
             >
               {/* Badges */}
               {product.stock === 0 && product.isLimited && (
-                <div className="status-badge sold">SOLD OUT</div>
-              )}
+                <div className="status-badge sold">ПРОДАНО</div>
+                      )}
               {product.isLimited && product.stock !== 0 && (
-                <div className="status-badge limited">LIMITED</div>
-              )}
-              {product.inDevelopment && (
-                <div className="status-badge limited">DEV</div>
-              )}
+                <div className="status-badge limited">ЛИМИТКА</div>
+                      )}
+                      {product.inDevelopment && (
+                <div className="status-badge dev">В РАЗРАБОТКЕ</div>
+                      )}
 
               <div className="card-image-container">
                 <img src={product.image} alt={product.title} loading="lazy" />
-              </div>
-              
+                    </div>
+                    
               <div className="card-info">
                 <span className="card-category">{product.category}</span>
                 <h3 className="card-title">{product.title}</h3>
-                
+                      
                 <div className="card-price-row">
                    <span className="card-price">₽{product.price}</span>
-                   <button 
+                        <button
                      id={`btn-${product.id}`}
                      className="glitch-btn"
-                     disabled={!product.available}
+                          disabled={!product.available}
                      onClick={(e) => {
                        e.stopPropagation();
                        if (product.available) handleAddToCart(product);
                      }}
-                   >
-                     {product.available ? 'ADD +' : 'N/A'}
-                   </button>
-                </div>
+                        >
+                     {product.available ? 'В КОРЗИНУ' : 'НЕТ В НАЛИЧИИ'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-          ))}
-        </div>
 
         {/* Empty State */}
         {filteredProducts.length === 0 && (
-          <div style={{ padding: '4rem', textAlign: 'center', color: '#666', textTransform: 'uppercase', letterSpacing: '2px' }}>
-            No artifacts found in this sector.
+          <div className="empty-state">
+            В ЭТОЙ КАТЕГОРИИ ПОКА НЕТ ТОВАРОВ
           </div>
         )}
-      </div>
+        </div>
 
       {/* Modal */}
       {selectedProduct && (
@@ -279,26 +285,29 @@ const ShopPage = () => {
             <button className="modal-close-btn" onClick={() => setSelectedProduct(null)}>✕</button>
             
             <div className="modal-left">
-              <img src={selectedProduct.image} alt={selectedProduct.title} />
-            </div>
-            
+                <img src={selectedProduct.image} alt={selectedProduct.title} />
+              </div>
+              
             <div className="modal-right">
-              <span className="card-category" style={{fontSize: '1rem', marginBottom: '1rem'}}>
-                {selectedProduct.category} // ID: {selectedProduct.id}
-              </span>
+              <span className="modal-category">
+                {selectedProduct.category === 'meme' ? 'МЕМЫ' : 
+                 selectedProduct.category === 'art' ? 'ИСКУССТВО' : 
+                 selectedProduct.category === 'design' ? 'ДИЗАЙН' : 
+                 'ОРИГИНАЛ'} // ID: {selectedProduct.id}
+                        </span>
               
               <h2 className="modal-title">{selectedProduct.title}</h2>
-              
+                    
               <div className="modal-price">
-                ₽{selectedProduct.price}
-              </div>
-
+                ₽{selectedProduct.price.toLocaleString()}
+                    </div>
+                    
               <p className="modal-desc">
                 {selectedProduct.description}
                 {selectedProduct.isLimited && (
-                   <div style={{marginTop: '1rem', color: 'var(--sp-accent-yellow)'}}>
-                     ⚠ LIMITED EDITION: {selectedProduct.limitedInfo}
-                   </div>
+                   <div className="modal-limited-info">
+                     ⚠️ ЛИМИТИРОВАННОЕ ИЗДАНИЕ: {selectedProduct.limitedInfo}
+                  </div>
                 )}
               </p>
 
@@ -307,11 +316,11 @@ const ShopPage = () => {
                     className="modal-add-btn"
                     onClick={() => handleAddToCart(selectedProduct)}
                   >
-                    Add to Collection
+                    ДОБАВИТЬ В КОЛЛЕКЦИЮ
                   </button>
               ) : (
-                  <button className="modal-add-btn" disabled style={{opacity: 0.5, cursor: 'not-allowed'}}>
-                    {selectedProduct.inDevelopment ? 'Coming Soon' : 'Sold Out'}
+                  <button className="modal-add-btn disabled" disabled>
+                    {selectedProduct.inDevelopment ? 'СКОРО В ПРОДАЖЕ' : 'ПРОДАНО'}
                   </button>
               )}
             </div>

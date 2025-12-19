@@ -1,3 +1,5 @@
+/* EmailAuth.css - Spider-Verse Glitch Theme */
+
 .email-auth {
   width: 100%;
   max-width: 500px;
@@ -10,26 +12,29 @@
 }
 
 .email-auth-header h2 {
-  font-size: 1.8rem;
+  font-family: var(--sp-font-display);
+  font-size: 2.5rem;
   font-weight: 900;
   margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, #e31937, #0066cc);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  text-transform: uppercase;
+  color: var(--sp-text-primary);
+  text-shadow: 2px 2px 0px var(--sp-accent-red);
 }
 
 .email-auth-header p {
-  color: var(--text-secondary, #9ca3af);
+  color: var(--sp-text-secondary);
+  font-family: var(--sp-font-body);
   font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .email-auth-form {
-  background: var(--bg-card, #1a1a1a);
+  background: var(--sp-bg-card);
   padding: 2rem;
-  border-radius: 16px;
-  border: 1px solid var(--border-color, #2a2a2a);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--sp-accent-red);
+  box-shadow: 0 0 20px rgba(255, 0, 60, 0.1);
+  position: relative;
 }
 
 .form-group {
@@ -45,94 +50,112 @@
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: var(--text-primary, #f9fafb);
-  font-weight: 500;
-  font-size: 0.9rem;
+  color: var(--sp-text-primary);
+  font-family: var(--sp-font-body);
+  font-weight: bold;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .form-group input {
   width: 100%;
-  padding: 0.75rem;
-  background: var(--bg-secondary, #2a2a2a);
-  border: 2px solid var(--border-color, #3a3a3a);
-  border-radius: 8px;
+  padding: 1rem;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-family: var(--sp-font-body);
   font-size: 1rem;
-  color: var(--text-primary, #f9fafb);
+  color: var(--sp-text-primary);
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
 .form-group input::placeholder {
-  color: var(--text-tertiary, #6b7280);
+  color: var(--sp-text-secondary);
+  opacity: 0.5;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #0066cc;
-  background: var(--bg-secondary, #333);
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+  border-color: var(--sp-accent-blue);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
 }
 
 .form-group input.error {
-  border-color: #fc8181;
+  border-color: var(--sp-accent-red);
 }
 
 .form-group input.error:focus {
-  box-shadow: 0 0 0 3px rgba(252, 129, 129, 0.1);
+  box-shadow: 0 0 15px rgba(255, 0, 60, 0.2);
 }
 
 .form-group input:disabled {
-  background-color: var(--bg-disabled, #1a1a1a);
+  background-color: #111;
   cursor: not-allowed;
   opacity: 0.5;
+  border-color: #333;
 }
 
 .error-text {
   display: block;
-  color: #e53e3e;
+  color: var(--sp-accent-red);
+  font-family: var(--sp-font-body);
   font-size: 0.85rem;
-  margin-top: 0.25rem;
+  margin-top: 0.5rem;
 }
 
 .submit-button {
   width: 100%;
-  padding: 0.875rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
+  padding: 1rem;
+  background: var(--sp-text-primary);
+  color: #000;
+  border: 1px solid var(--sp-text-primary);
+  font-family: var(--sp-font-display);
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
+  min-height: 50px;
+  letter-spacing: 1px;
 }
 
 .submit-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+  background: var(--sp-accent-red);
+  border-color: var(--sp-accent-red);
+  color: #fff;
+  box-shadow: 5px 5px 0px var(--sp-accent-blue);
+  transform: translate(-2px, -2px);
 }
 
 .submit-button:active:not(:disabled) {
-  transform: translateY(0);
+  transform: translate(0, 0);
+  box-shadow: none;
 }
 
 .submit-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
+  background: #333;
+  border-color: #333;
+  color: #666;
 }
 
 .loading-spinner-small {
   width: 20px;
   height: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  border-top-color: #000;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
+}
+
+.submit-button:hover .loading-spinner-small {
+  border-top-color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 @keyframes spin {
@@ -147,16 +170,19 @@
 .toggle-mode-button {
   background: none;
   border: none;
-  color: #0066cc;
-  font-size: 0.95rem;
+  color: var(--sp-accent-blue);
+  font-family: var(--sp-font-body);
+  font-size: 0.9rem;
   cursor: pointer;
   padding: 0.5rem 1rem;
   transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .toggle-mode-button:hover:not(:disabled) {
-  color: #0088ff;
-  text-decoration: underline;
+  color: var(--sp-text-primary);
+  text-shadow: 0 0 5px var(--sp-accent-blue);
 }
 
 .toggle-mode-button:disabled {
@@ -167,7 +193,7 @@
 /* Mobile responsive */
 @media (max-width: 640px) {
   .email-auth {
-    padding: 1rem;
+    padding: 0;
   }
 
   .email-auth-form {
@@ -179,6 +205,6 @@
   }
 
   .email-auth-header h2 {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
 }

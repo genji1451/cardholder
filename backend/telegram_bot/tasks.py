@@ -8,7 +8,9 @@ from asgiref.sync import sync_to_async
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.error import TelegramError, Forbidden, BadRequest
 from django.conf import settings
-from telegram_bot.models import BotUser, Notification
+from django.utils import timezone
+from telegram_bot.models import BotUser, Notification, Break
+from telegram_bot.breaks import complete_break
 
 logger = logging.getLogger(__name__)
 
@@ -257,4 +259,57 @@ async def send_message_to_user(user_id, message, parse_mode='HTML', reply_markup
     except Exception as e:
         logger.error(f"Error sending message to user {user_id}: {e}")
         return False
+
+
+def check_and_complete_breaks():
+    """
+    Проверяет и завершает брейки, у которых истёк срок
+    
+    Эта функция должна вызываться периодически (например, через cron или celery)
+    """
+    try:
+        asyncio.run(check_and_complete_breaks_async())
+    except Exception as e:
+        logger.error(f"Error in check_and_complete_breaks: {e}", exc_info=True)
+        raise
+
+
+async def check_and_complete_breaks_async():
+    """
+    Асинхронная проверка и завершение брейков
+    """
+    try:
+        @sync_to_async
+        def get_expired_breaks():
+            """Получает брейки, у которых истёк срок"""
+            now = timezone.now()
+            return list(Break.objects.filter(
+                status='active',
+                end_time__lte=now
+            ))
+        
+        expired_breaks = await get_expired_breaks()
+        
+        if not expired_breaks:
+            logger.debug("No expired breaks found")
+            return
+        
+        bot_token = settings.TELEGRAM_BOT_TOKEN
+        if not bot_token:
+            logger.error("TELEGRAM_BOT_TOKEN не настроен")
+            return
+        
+        bot = Bot(token=bot_token)
+        
+        for break_obj in expired_breaks:
+            try:
+                logger.info(f"Completing break {break_obj.id}: {break_obj.name}")
+                await complete_break(break_obj, bot)
+            except Exception as e:
+                logger.error(f"Error completing break {break_obj.id}: {e}", exc_info=True)
+        
+        logger.info(f"Completed {len(expired_breaks)} breaks")
+        
+    except Exception as e:
+        logger.error(f"Error in check_and_complete_breaks_async: {e}", exc_info=True)
 

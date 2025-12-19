@@ -475,3 +475,313 @@ class Notification(models.Model):
         self.error_message = error_msg
         self.save()
 
+
+"""
+Ранее здесь были модели для игры «Тайный Санта».
+Функционал полностью удалён из проекта.
+"""
+
+
+class Break(models.Model):
+    """
+    Модель брейка (аукциона на группы карт)
+    
+    Брейк - это формат аукциона, где пользователи делают ставки на группы карт.
+    После окончания администратор открывает бустеры, и победитель получает все карты из группы.
+    """
+    
+    STATUS_CHOICES = [
+        ('draft', 'Черновик'),
+        ('scheduled', 'Запланирован'),
+        ('active', 'Активен'),
+        ('completed', 'Завершён'),
+        ('cancelled', 'Отменён'),
+    ]
+    
+    name = models.CharField(
+        max_length=255,
+        verbose_name='Название брейка',
+        help_text='Например: Брейк Marvel Heroes'
+    )
+    
+    description = models.TextField(
+        verbose_name='Описание',
+        help_text='Описание брейка для пользователей'
+    )
+    
+    checklist_url = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name='Ссылка на чек-лист',
+        help_text='Ссылка на чек-лист коллекции'
+    )
+    
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='draft',
+        verbose_name='Статус'
+    )
+    
+    start_time = models.DateTimeField(
+        verbose_name='Время начала',
+        help_text='Когда начинается брейк'
+    )
+    
+    end_time = models.DateTimeField(
+        verbose_name='Время окончания',
+        help_text='Когда заканчивается брейк (может продлеваться при ставках)'
+    )
+    
+    # Информация о посте в канале
+    channel_post_id = models.BigIntegerField(
+        null=True,
+        blank=True,
+        verbose_name='ID поста в канале',
+        help_text='ID сообщения с постом о брейке в Telegram-канале'
+    )
+    
+    channel_id = models.BigIntegerField(
+        null=True,
+        blank=True,
+        verbose_name='ID канала',
+        help_text='ID Telegram-канала, где опубликован брейк'
+    )
+    
+    created_by = models.ForeignKey(
+        BotUser,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='created_breaks',
+        verbose_name='Создатель'
+    )
+    
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата создания'
+    )
+    
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name='Дата обновления'
+    )
+    
+    class Meta:
+        verbose_name = 'Брейк'
+        verbose_name_plural = 'Брейки'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['status', 'start_time']),
+            models.Index(fields=['status', 'end_time']),
+        ]
+    
+    def __str__(self):
+        return f"{self.name} - {self.get_status_display()}"
+    
+    def is_active(self):
+        """Проверяет, активен ли брейк"""
+        now = timezone.now()
+        return (
+            self.status == 'active' and
+            self.start_time <= now <= self.end_time
+        )
+    
+    def extend_end_time(self, minutes=5):
+        """
+        Продлевает время окончания брейка
+        
+        Args:
+            minutes: На сколько минут продлить (по умолчанию 5)
+        """
+        self.end_time = self.end_time + timezone.timedelta(minutes=minutes)
+        self.save(update_fields=['end_time'])
+    
+    def get_active_groups(self):
+        """Возвращает активные группы брейка"""
+        return self.groups.filter(is_active=True).order_by('order', 'id')
+
+
+class BreakGroup(models.Model):
+    """
+    Группа карт в брейке
+    
+    Каждая группа представляет собой категорию карт, на которую делаются ставки.
+    Победитель получает ВСЕ карты из этой группы.
+    """
+    
+    break_obj = models.ForeignKey(
+        Break,
+        on_delete=models.CASCADE,
+        related_name='groups',
+        verbose_name='Брейк'
+    )
+    
+    name = models.CharField(
+        max_length=255,
+        verbose_name='Название группы',
+        help_text='Например: Кот Ик, Люди Икс'
+    )
+    
+    order = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Порядок',
+        help_text='Порядок отображения группы'
+    )
+    
+    min_bid = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=1.00,
+        verbose_name='Минимальная ставка',
+        help_text='Минимальная ставка в рублях'
+    )
+    
+    bid_step = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=50.00,
+        verbose_name='Шаг ставки',
+        help_text='Минимальный шаг увеличения ставки'
+    )
+    
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='Активна'
+    )
+    
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата создания'
+    )
+    
+    class Meta:
+        verbose_name = 'Группа брейка'
+        verbose_name_plural = 'Группы брейков'
+        ordering = ['order', 'id']
+        indexes = [
+            models.Index(fields=['break_obj', 'is_active']),
+        ]
+    
+    def __str__(self):
+        return f"{self.break_obj.name} - {self.name}"
+    
+    def get_current_bid(self):
+        """Возвращает текущую максимальную ставку"""
+        latest_bid = self.bids.filter(is_valid=True).order_by('-amount', '-created_at').first()
+        return latest_bid.amount if latest_bid else self.min_bid
+    
+    def get_min_next_bid(self):
+        """Возвращает минимальную следующую ставку"""
+        current = self.get_current_bid()
+        return current + self.bid_step
+    
+    def get_winner(self):
+        """Возвращает победителя группы (после завершения брейка)"""
+        try:
+            return self.winner
+        except BreakWinner.DoesNotExist:
+            return None
+
+
+class BreakBid(models.Model):
+    """
+    Ставка в брейке
+    
+    Хранит все ставки пользователей по группам.
+    """
+    
+    group = models.ForeignKey(
+        BreakGroup,
+        on_delete=models.CASCADE,
+        related_name='bids',
+        verbose_name='Группа'
+    )
+    
+    user = models.ForeignKey(
+        BotUser,
+        on_delete=models.CASCADE,
+        related_name='break_bids',
+        verbose_name='Пользователь'
+    )
+    
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='Сумма ставки'
+    )
+    
+    is_valid = models.BooleanField(
+        default=True,
+        verbose_name='Действительна',
+        help_text='Является ли ставка текущей максимальной'
+    )
+    
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата ставки'
+    )
+    
+    class Meta:
+        verbose_name = 'Ставка в брейке'
+        verbose_name_plural = 'Ставки в брейках'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['group', 'is_valid', '-amount']),
+            models.Index(fields=['user', '-created_at']),
+        ]
+    
+    def __str__(self):
+        return f"{self.user.get_full_name()} - {self.amount}₽ ({self.group.name})"
+    
+    def invalidate(self):
+        """Делает ставку недействительной (когда её перебили)"""
+        self.is_valid = False
+        self.save(update_fields=['is_valid'])
+
+
+class BreakWinner(models.Model):
+    """
+    Победитель группы в брейке
+    
+    Создаётся после завершения брейка для каждой группы.
+    """
+    
+    group = models.OneToOneField(
+        BreakGroup,
+        on_delete=models.CASCADE,
+        related_name='winner',
+        verbose_name='Группа'
+    )
+    
+    user = models.ForeignKey(
+        BotUser,
+        on_delete=models.CASCADE,
+        related_name='break_wins',
+        verbose_name='Победитель'
+    )
+    
+    winning_bid = models.ForeignKey(
+        BreakBid,
+        on_delete=models.CASCADE,
+        related_name='win',
+        verbose_name='Выигрышная ставка'
+    )
+    
+    notified = models.BooleanField(
+        default=False,
+        verbose_name='Уведомлён',
+        help_text='Получил ли победитель уведомление'
+    )
+    
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата определения победителя'
+    )
+    
+    class Meta:
+        verbose_name = 'Победитель брейка'
+        verbose_name_plural = 'Победители брейков'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.user.get_full_name()} - {self.group.name} ({self.winning_bid.amount}₽)"

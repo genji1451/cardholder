@@ -15,6 +15,7 @@ from telegram.ext import (
     ContextTypes,
 )
 from telegram.error import TelegramError
+from django.utils import timezone
 
 # Настройка Django
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -27,6 +28,13 @@ from django.conf import settings
 from apps.cards.models import Card
 from telegram_bot.models import VerifiedCard
 from telegram_bot.utils import get_card_image_path, format_card_info
+from telegram_bot.breaks import (
+    breaks_menu,
+    break_view,
+    break_group_view,
+    break_bid_start,
+    break_bid_process,
+)
 
 # Настройка логирования
 logging.basicConfig(
@@ -40,10 +48,21 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обработчик команды /start"""
     user = update.effective_user
     
-    # Проверяем, есть ли параметр с ID карты в deep link
+    # Проверяем, есть ли параметр в deep link
     if context.args:
-        verify_code = context.args[0]
-        await verify_card(update, context, verify_code)
+        arg = context.args[0]
+        
+        # Проверяем, это код верификации карты или ссылка на брейк
+        if arg.startswith('break_'):
+            # Это ссылка на брейк
+            try:
+                break_id = int(arg.replace('break_', ''))
+                await break_view_from_deeplink(update, context, break_id)
+            except ValueError:
+                await verify_card(update, context, arg)
+        else:
+            # Это код верификации карты
+            await verify_card(update, context, arg)
         return
     
     welcome_message = (
@@ -53,10 +72,77 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "чтобы проверить её подлинность и получить информацию.\n\n"
         "❓ Команды:\n"
         "/help - Помощь\n"
-        "/info - О боте"
+        "/info - О боте\n"
+        "/breaks - 📦 Брейки\n"
     )
     
-    await update.message.reply_text(welcome_message)
+    # Создаем клавиатуру с кнопками
+    keyboard = [
+        [InlineKeyboardButton("📦 Брейки", callback_data="breaks_menu")],
+        [InlineKeyboardButton("ℹ️ О боте", callback_data="info_menu")],
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    await update.message.reply_text(welcome_message, reply_markup=reply_markup)
+
+
+async def break_view_from_deeplink(update: Update, context: ContextTypes.DEFAULT_TYPE, break_id: int) -> None:
+    """
+    Обработка deep link на брейк
+    
+    Открывает брейк напрямую из ссылки.
+    """
+    from telegram_bot.models import Break
+    
+    try:
+        break_obj = Break.objects.prefetch_related('groups').get(id=break_id)
+    except Break.DoesNotExist:
+        await update.message.reply_text("❌ Брейк не найден")
+        return
+    
+    # Формируем сообщение аналогично break_view, но для обычного сообщения
+    message = f"🎯 <b>{break_obj.name}</b>\n\n"
+    message += f"{break_obj.description}\n\n"
+    
+    if break_obj.checklist_url:
+        message += f"📋 <a href='{break_obj.checklist_url}'>Чек-лист коллекции</a>\n\n"
+    
+    if break_obj.status == 'active':
+        time_left = break_obj.end_time - timezone.now()
+        if time_left.total_seconds() > 0:
+            hours = int(time_left.total_seconds() // 3600)
+            minutes = int((time_left.total_seconds() % 3600) // 60)
+            message += f"⏰ Осталось времени: {hours}ч {minutes}м\n\n"
+    
+    groups = break_obj.get_active_groups()
+    if groups.exists():
+        message += "<b>Группы:</b>\n"
+        keyboard = []
+        
+        for group in groups:
+            current_bid = group.get_current_bid()
+            message += f"\n{group.order + 1}. <b>{group.name}</b> - {current_bid}₽"
+            
+            keyboard.append([
+                InlineKeyboardButton(
+                    f"{group.order + 1}. {group.name} ({current_bid}₽)",
+                    callback_data=f"break_group_{group.id}"
+                )
+            ])
+        
+        keyboard.append([InlineKeyboardButton("◀️ Назад", callback_data="main_menu")])
+        reply_markup = InlineKeyboardMarkup(keyboard)
+    else:
+        message += "Группы пока не добавлены."
+        keyboard = [[InlineKeyboardButton("◀️ Назад", callback_data="main_menu")]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    await update.message.reply_text(
+        message,
+        parse_mode='HTML',
+        reply_markup=reply_markup,
+        disable_web_page_preview=False
+    )
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -187,6 +273,31 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     
     data = query.data
     
+    if data == "main_menu":
+        await start(update, context)
+        return
+    elif data == "info_menu":
+        await info_command_inline(update, context)
+        return
+    elif data == "breaks_menu":
+        await breaks_menu(update, context)
+        return
+    
+    # Break callbacks
+    if data.startswith("break_view_"):
+        break_id = int(data.replace("break_view_", ""))
+        await break_view(update, context, break_id)
+        return
+    elif data.startswith("break_group_"):
+        group_id = int(data.replace("break_group_", ""))
+        await break_group_view(update, context, group_id)
+        return
+    elif data.startswith("break_bid_"):
+        group_id = int(data.replace("break_bid_", ""))
+        await break_bid_start(update, context, group_id)
+        return
+    
+    # Card verification callbacks
     if data.startswith("details_"):
         verified_card_id = int(data.split("_")[1])
         try:
@@ -240,6 +351,42 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             )
 
 
+async def info_command_inline(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Обработчик inline кнопки info"""
+    query = update.callback_query
+    await query.answer()
+    
+    info_text = (
+        "ℹ️ <b>О системе проверки подлинности</b>\n\n"
+        "Каждая оригинальная карточка имеет уникальный QR-код, "
+        "который невозможно подделать.\n\n"
+        "🔐 QR-код содержит зашифрованную информацию:\n"
+        "  • Уникальный идентификатор карты\n"
+        "  • Серийный номер\n"
+        "  • Информацию о серии\n\n"
+        "Эта система защищает вас от подделок и помогает "
+        "проверить подлинность карты в любой момент.\n\n"
+        "💼 Для владельцев коллекций: вы можете использовать "
+        "этот бот для управления своим инвентарём."
+    )
+    
+    keyboard = [[InlineKeyboardButton("◀️ Назад", callback_data="main_menu")]]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    await query.edit_message_text(info_text, parse_mode='HTML', reply_markup=reply_markup)
+
+
+async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Обработчик текстовых сообщений"""
+    # Проверяем, ожидается ли ставка в брейке
+    if 'break_bid_group_id' in context.user_data:
+        await break_bid_process(update, context)
+        return
+    
+    # Иначе обрабатываем как неизвестную команду
+    await unknown_command(update, context)
+
+
 async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обработчик неизвестных команд и сообщений"""
     await update.message.reply_text(
@@ -264,12 +411,20 @@ def main() -> None:
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("info", info_command))
+    application.add_handler(CommandHandler("breaks", breaks_menu))
     
     # Обработчик callback'ов от inline кнопок
     application.add_handler(CallbackQueryHandler(button_callback))
     
+    # Обработчик ставок в брейках (обрабатывает текстовые сообщения со ставками)
+    # Должен быть перед общим обработчиком текста
+    application.add_handler(MessageHandler(
+        filters.TEXT & ~filters.COMMAND,
+        handle_text_message
+    ))
+    
     # Обработчик неизвестных команд (должен быть последним)
-    application.add_handler(MessageHandler(filters.COMMAND | filters.TEXT, unknown_command))
+    application.add_handler(MessageHandler(filters.COMMAND, unknown_command))
     
     # Запускаем бота
     logger.info("🤖 Бот запущен и готов к работе...")

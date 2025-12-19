@@ -20,7 +20,7 @@ const DashboardPage = () => {
     return (
       <div className="dashboard-page">
         <div className="dashboard-container">
-          <div className="loading">Loading dashboard...</div>
+        <div className="loading">Loading dashboard...</div>
         </div>
       </div>
     );
@@ -30,7 +30,7 @@ const DashboardPage = () => {
     return (
       <div className="dashboard-page">
         <div className="dashboard-container">
-          <div className="error">Error loading dashboard data</div>
+        <div className="error">Error loading dashboard data</div>
         </div>
       </div>
     );
@@ -39,20 +39,20 @@ const DashboardPage = () => {
   return (
     <div className="dashboard-page">
       <div className="dashboard-container">
-        <div className="dashboard-header">
+      <div className="dashboard-header">
           <h1>🕷️ Dashboard</h1>
-          <p>Welcome to your Spider-Man cards collection</p>
-        </div>
+        <p>Welcome to your Spider-Man cards collection</p>
+      </div>
 
-        <div className="dashboard-grid">
-          <div className="dashboard-main">
-            <OverviewCards overview={overview} />
-            <Charts />
-          </div>
-          
-          <div className="dashboard-sidebar">
-            <SubscriptionChecker />
-            <TopExpensive />
+      <div className="dashboard-grid">
+        <div className="dashboard-main">
+          <OverviewCards overview={overview} />
+          <Charts />
+        </div>
+        
+        <div className="dashboard-sidebar">
+          <SubscriptionChecker />
+          <TopExpensive />
           </div>
         </div>
       </div>
